@@ -1,48 +1,71 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
     <title>Print Loan Slip</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Loan Slip Details</h1>
+    <div class="container">
+        <h1>📋 Loan Slip</h1>
 
-    <c:if test="${not empty message}">
-        <h3 style="color:green;">${message}</h3>
-    </c:if>
+        <c:if test="${not empty message}">
+            <div class="alert alert-success no-print">
+                <p>${message}</p>
+            </div>
+        </c:if>
 
-    <p><strong>Loan Date:</strong> <%= new java.util.Date() %></p>
-    <hr>
-    <h3>Reader Information</h3>
-    <p><strong>Reader ID:</strong> ${sessionScope.selectedReader.id}</p>
-    <p><strong>Reader Name:</strong> ${sessionScope.selectedReader.name}</p>
-    <hr>
-    <h3>Librarian Information</h3>
-    <p><strong>Librarian ID:</strong> ${sessionScope.loggedInLibrarian.id}</p>
-    <p><strong>Librarian Name:</strong> ${sessionScope.loggedInLibrarian.name}</p>
-    <hr>
-    <h3>Loaned Documents</h3>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Doc ID</th>
-                <th>Title</th>
-                <th>Due Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="detail" items="${sessionScope.currentLoanDetails}">
+        <div class="info-box">
+            <p><strong>Loan Date:</strong> <fmt:formatDate value="<%= new java.util.Date() %>" pattern="dd/MM/yyyy HH:mm"/></p>
+        </div>
+
+        <h3>Reader Information</h3>
+        <div class="info-box">
+            <p><strong>Reader ID:</strong> ${sessionScope.selectedReader.id}</p>
+            <p><strong>Name:</strong> ${sessionScope.selectedReader.name}</p>
+            <p><strong>Email:</strong> ${sessionScope.selectedReader.email}</p>
+            <p><strong>Phone:</strong> ${sessionScope.selectedReader.phone}</p>
+        </div>
+
+        <h3>Librarian Information</h3>
+        <div class="info-box">
+            <p><strong>Librarian ID:</strong> ${sessionScope.loggedInLibrarian.id}</p>
+            <p><strong>Name:</strong> ${sessionScope.loggedInLibrarian.name}</p>
+        </div>
+
+        <h3>Loaned Documents</h3>
+        <table>
+            <thead>
                 <tr>
-                    <td>${detail.document.id}</td>
-                    <td>${detail.document.title}</td>
-                    <td>${detail.dueDate}</td>
+                    <th>No.</th>
+                    <th>Doc ID</th>
+                    <th>Title</th>
+                    <th>Due Date</th>
                 </tr>
-            </c:forEach>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <c:forEach var="detail" items="${sessionScope.currentLoanDetails}" varStatus="status">
+                    <tr>
+                        <td>${status.index + 1}</td>
+                        <td>${detail.document.id}</td>
+                        <td>${detail.document.title}</td>
+                        <td><fmt:formatDate value="${detail.dueDate}" pattern="dd/MM/yyyy"/></td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
 
-    <br>
-    <button onclick="window.print()">Print</button>
-    <a href="${pageContext.request.contextPath}/LibrarianHome.jsp">Back to Home</a>
+        <div class="nav-links no-print">
+            <button onclick="window.print()">🖨️ Print</button>
+            <a href="${pageContext.request.contextPath}/LibrarianHome.jsp" class="btn-secondary">Back to Home</a>
+        </div>
+    </div>
 </body>
 </html>

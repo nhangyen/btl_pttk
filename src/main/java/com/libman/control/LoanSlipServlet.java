@@ -61,7 +61,7 @@ public class LoanSlipServlet extends HttpServlet {
         currentLoanDetails.add(loanDetail);
         session.setAttribute("currentLoanDetails", currentLoanDetails);
 
-        response.sendRedirect("view/ManageLendingDocument.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/ManageLendingDocument.jsp");
     }
 
     private void saveLoan(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, ServletException {

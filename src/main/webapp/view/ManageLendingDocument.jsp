@@ -2,65 +2,81 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Manage Lending</title>
+    <title>Manage Document Lending</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
-    <h1>Manage Document Lending</h1>
+    <div class="container">
+        <h1>Manage Document Lending</h1>
 
     <!-- Step 1: Scan Reader Card -->
-    <a href="ScanReaderCard.jsp">Scan Reader Card</a>
+    <div class="nav-links">
+        <a href="ScanReaderCard.jsp">Scan Reader Card</a>
+    </div>
 
     <c:if test="${not empty sessionScope.selectedReader}">
-        <hr>
         <h3>Selected Reader</h3>
-        <p>ID: ${sessionScope.selectedReader.id}</p>
-        <p>Name: ${sessionScope.selectedReader.name}</p>
+        <div class="info-box">
+            <p><strong>ID:</strong> ${sessionScope.selectedReader.id}</p>
+            <p><strong>Name:</strong> ${sessionScope.selectedReader.name}</p>
+            <p><strong>Email:</strong> ${sessionScope.selectedReader.email}</p>
+        </div>
 
         <!-- Step 2: Scan Document -->
-        <hr>
         <h3>Add Document to Loan</h3>
         <form action="${pageContext.request.contextPath}/lending" method="post">
             <input type="hidden" name="action" value="addDocument">
-            Document ID: <input type="text" name="docId">
-            Due Date: <input type="date" name="dueDate">
-            <input type="submit" value="Add Document">
+            <label>Document ID:</label>
+            <input type="text" name="docId" placeholder="Enter document ID">
+            <label>Due Date:</label>
+            <input type="date" name="dueDate">
+            <button type="submit">Add Document</button>
         </form>
-        <br>
-        <a href="ScanDocument.jsp">Or Scan Document</a>
+        
+        <div class="nav-links">
+            <a href="ScanDocument.jsp">Or Scan Document</a>
+        </div>
 
         <!-- Current Loan -->
-        <hr>
         <h3>Current Loan Cart</h3>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Doc ID</th>
-                    <th>Title</th>
-                    <th>Due Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="detail" items="${sessionScope.currentLoanDetails}">
+        <c:if test="${not empty sessionScope.currentLoanDetails}">
+            <table>
+                <thead>
                     <tr>
-                        <td>${detail.document.id}</td>
-                        <td>${detail.document.title}</td>
-                        <td>${detail.dueDate}</td>
+                        <th>Doc ID</th>
+                        <th>Title</th>
+                        <th>Due Date</th>
                     </tr>
-                </c:forEach>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <c:forEach var="detail" items="${sessionScope.currentLoanDetails}">
+                        <tr>
+                            <td>${detail.document.id}</td>
+                            <td>${detail.document.title}</td>
+                            <td>${detail.dueDate}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </c:if>
 
         <!-- Step 3: Print Slip -->
-        <hr>
         <form action="${pageContext.request.contextPath}/lending" method="post">
             <input type="hidden" name="action" value="saveLoan">
-            <input type="submit" value="Print Loan Slip">
+            <button type="submit">Print Loan Slip</button>
         </form>
     </c:if>
 
     <c:if test="${not empty error}">
-        <p style="color:red;">${error}</p>
+        <div class="alert alert-error">
+            <p>${error}</p>
+        </div>
     </c:if>
-
+    
+    <div class="nav-links">
+        <a href="${pageContext.request.contextPath}/LibrarianHome.jsp" class="btn-secondary">Back to Home</a>
+    </div>
+    
+    </div>
 </body>
 </html>
