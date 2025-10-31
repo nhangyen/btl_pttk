@@ -7,15 +7,15 @@ public class LoanDetail implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
     private Date dueDate;
-    private Document document;
+    private DocumentCopy documentCopy;
 
     public LoanDetail() {
     }
 
-    public LoanDetail(int id, Date dueDate, Document document) {
+    public LoanDetail(int id, Date dueDate, DocumentCopy documentCopy) {
         this.id = id;
         this.dueDate = dueDate;
-        this.document = document;
+        this.documentCopy = documentCopy;
     }
 
     // Getters and Setters
@@ -35,11 +35,22 @@ public class LoanDetail implements Serializable {
         this.dueDate = dueDate;
     }
 
-    public Document getDocument() {
-        return document;
+    public DocumentCopy getDocumentCopy() {
+        return documentCopy;
     }
 
-    public void setDocument(Document document) {
-        this.document = document;
+    public void setDocumentCopy(DocumentCopy documentCopy) {
+        this.documentCopy = documentCopy;
+    }
+    
+    // Compatibility method for backward compatibility
+    @Deprecated
+    public DocumentCopy getDocument() {
+        return documentCopy;
+    }
+    
+    @Deprecated
+    public void setDocument(DocumentCopy documentCopy) {
+        this.documentCopy = documentCopy;
     }
 }

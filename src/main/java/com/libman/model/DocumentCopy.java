@@ -1,28 +1,23 @@
 package com.libman.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 
-public class Document implements Serializable {
+public class DocumentCopy implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private int id;
     private int condition;
     private String status;
-    private int bookTitleId;
-    
-    // Thông tin từ BookTitle (để hiển thị)
     private BookTitle bookTitle;
 
-    public Document() {
+    public DocumentCopy() {
     }
 
-    public Document(int id, int condition, String status, int bookTitleId) {
+    public DocumentCopy(int id, int condition, String status, BookTitle bookTitle) {
         this.id = id;
         this.condition = condition;
         this.status = status;
-        this.bookTitleId = bookTitleId;
+        this.bookTitle = bookTitle;
     }
 
     // Getters and Setters
@@ -50,14 +45,6 @@ public class Document implements Serializable {
         this.status = status;
     }
 
-    public int getBookTitleId() {
-        return bookTitleId;
-    }
-
-    public void setBookTitleId(int bookTitleId) {
-        this.bookTitleId = bookTitleId;
-    }
-
     public BookTitle getBookTitle() {
         return bookTitle;
     }
@@ -71,8 +58,16 @@ public class Document implements Serializable {
         return bookTitle != null ? bookTitle.getTitle() : "";
     }
     
+    public String getAuthor() {
+        return bookTitle != null ? bookTitle.getAuthor() : "";
+    }
+    
     public String getPublisher() {
         return bookTitle != null ? bookTitle.getPublisher() : "";
+    }
+    
+    public int getPublicationYear() {
+        return bookTitle != null ? bookTitle.getPublicationYear() : 0;
     }
     
     public String getCategory() {
@@ -83,40 +78,11 @@ public class Document implements Serializable {
         return bookTitle != null ? bookTitle.getLanguage() : "";
     }
     
-    // Compatibility method - trả về publisher vì schema không có author
-    public String getAuthor() {
-        return getPublisher();
-    }
-    
     public int getPageCount() {
         return bookTitle != null ? bookTitle.getPageCount() : 0;
     }
     
-    public int getPublicationYear() {
-        return bookTitle != null ? bookTitle.getPublicationYear() : 0;
-    }
-    
-    // Compatibility method cho getPublicYear (deprecated)
-    @Deprecated
-    public Date getPublicYear() {
-        int year = getPublicationYear();
-        if (year > 0) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, 0);
-            cal.set(Calendar.DAY_OF_MONTH, 1);
-            return cal.getTime();
-        }
-        return null;
-    }
-    
     public String getDescription() {
         return bookTitle != null ? bookTitle.getDescription() : "";
-    }
-    
-    // Quantity - trong schema không có quantity cho document
-    // Mỗi document là 1 bản vật lý, nên quantity luôn là 1 nếu Available
-    public int getQuantity() {
-        return "Available".equalsIgnoreCase(status) ? 1 : 0;
     }
 }

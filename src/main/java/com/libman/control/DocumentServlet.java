@@ -1,7 +1,7 @@
 package com.libman.control;
 
 import com.libman.dao.DocumentDAO;
-import com.libman.model.Document;
+import com.libman.model.DocumentCopy;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -43,7 +43,7 @@ public class DocumentServlet extends HttpServlet {
             keyword = ""; // Sẽ match tất cả trong LIKE query
         }
         
-        List<Document> documents = documentDAO.getDocuments(keyword);
+        List<DocumentCopy> documents = documentDAO.getDocuments(keyword);
         request.setAttribute("documents", documents);
         request.setAttribute("keyword", keyword);
         request.getRequestDispatcher("view/SearchDocumentView.jsp").forward(request, response);
@@ -51,7 +51,7 @@ public class DocumentServlet extends HttpServlet {
 
     private void showDocumentDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Document document = documentDAO.getDocumentById(id);
+        DocumentCopy document = documentDAO.getDocumentById(id);
         request.setAttribute("document", document);
         request.getRequestDispatcher("view/DocumentDetailView.jsp").forward(request, response);
     }

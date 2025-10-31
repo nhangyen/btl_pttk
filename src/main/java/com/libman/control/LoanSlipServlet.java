@@ -41,7 +41,7 @@ public class LoanSlipServlet extends HttpServlet {
         int docId = Integer.parseInt(request.getParameter("docId"));
         String dueDateStr = request.getParameter("dueDate");
 
-        Document doc = new DocumentDAO().getDocumentById(docId);
+        DocumentCopy doc = new DocumentDAO().getDocumentById(docId);
         Date dueDate = null;
         try {
             dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateStr);
@@ -50,7 +50,7 @@ public class LoanSlipServlet extends HttpServlet {
         }
 
         LoanDetail loanDetail = new LoanDetail();
-        loanDetail.setDocument(doc);
+        loanDetail.setDocumentCopy(doc);
         loanDetail.setDueDate(dueDate);
 
         @SuppressWarnings("unchecked")

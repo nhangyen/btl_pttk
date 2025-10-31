@@ -35,7 +35,7 @@ public class LoanSlipDAO {
                             psLoanDetail.setInt(1, 1); // quantity = 1
                             psLoanDetail.setDate(2, new java.sql.Date(loanSlip.getLoanDate().getTime())); // borrowdate
                             psLoanDetail.setDate(3, new java.sql.Date(detail.getDueDate().getTime())); // returndate (due date)
-                            psLoanDetail.setInt(4, detail.getDocument().getId()); // DocumentCopyID
+                            psLoanDetail.setInt(4, detail.getDocumentCopy().getId()); // DocumentCopyID
                             psLoanDetail.setInt(5, loanSlipId); // LoanSlipID
                             psLoanDetail.executeUpdate();
                         }

@@ -2,6 +2,10 @@
 
 ## Cài đặt và chạy ứng dụng
 
+
+mvn jetty:run
+
+
 ### 1. Cài đặt cơ sở dữ liệu
 
 Chạy file SQL để tạo database và dữ liệu mẫu:

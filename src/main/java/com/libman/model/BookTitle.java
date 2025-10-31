@@ -1,15 +1,15 @@
 package com.libman.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class BookTitle implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private int id;
     private String title;
+    private String author;
     private String publisher;
-    private Date publicYear;
+    private int publicationYear;
     private String category;
     private String language;
     private int pageCount;
@@ -18,14 +18,17 @@ public class BookTitle implements Serializable {
     public BookTitle() {
     }
 
-    public BookTitle(int id, String title, String publisher, Date publicYear, String category, String language, int pageCount) {
+    public BookTitle(int id, String title, String author, String publisher, int publicationYear, 
+                     String category, String language, int pageCount, String description) {
         this.id = id;
         this.title = title;
+        this.author = author;
         this.publisher = publisher;
-        this.publicYear = publicYear;
+        this.publicationYear = publicationYear;
         this.category = category;
         this.language = language;
         this.pageCount = pageCount;
+        this.description = description;
     }
 
     // Getters and Setters
@@ -45,6 +48,14 @@ public class BookTitle implements Serializable {
         this.title = title;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     public String getPublisher() {
         return publisher;
     }
@@ -53,12 +64,12 @@ public class BookTitle implements Serializable {
         this.publisher = publisher;
     }
 
-    public Date getPublicYear() {
-        return publicYear;
+    public int getPublicationYear() {
+        return publicationYear;
     }
 
-    public void setPublicYear(Date publicYear) {
-        this.publicYear = publicYear;
+    public void setPublicationYear(int publicationYear) {
+        this.publicationYear = publicationYear;
     }
 
     public String getCategory() {

@@ -62,9 +62,9 @@
                     <c:forEach var="detail" items="${sessionScope.currentLoanDetails}" varStatus="status">
                         <tr>
                             <td>${status.index + 1}</td>
-                            <td><strong>#${detail.document.id}</strong></td>
-                            <td>${detail.document.title}</td>
-                            <td>${detail.document.author}</td>
+                            <td><strong>#${detail.documentCopy.id}</strong></td>
+                            <td>${detail.documentCopy.title}</td>
+                            <td>${detail.documentCopy.author}</td>
                             <td>${detail.dueDate}</td>
                         </tr>
                     </c:forEach>

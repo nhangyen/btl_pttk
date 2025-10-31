@@ -144,7 +144,6 @@ ALTER TABLE tblLoanSlip ADD CONSTRAINT FK_LoanSlip_Reader FOREIGN KEY (ReaderUse
 -- Liên kết đến Book/DocumentCopy (ĐÃ CẬP NHẬT)
 ALTER TABLE tblDocumentCopy ADD CONSTRAINT FK_DocumentCopy_BookTitle FOREIGN KEY (BookTitleID) REFERENCES tblBookTitle (ID);
 ALTER TABLE tblInvoiceDetail ADD CONSTRAINT FK_InvoiceDetail_DocumentCopy FOREIGN KEY (DocumentCopyID) REFERENCES tblDocumentCopy (ID);
-LOS
 ALTER TABLE tblLoanDetail ADD CONSTRAINT FK_LoanDetail_DocumentCopy FOREIGN KEY (DocumentCopyID) REFERENCES tblDocumentCopy (ID);
 
 -- Liên kết nghiệp vụ Nhập hàng
