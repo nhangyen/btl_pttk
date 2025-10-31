@@ -61,16 +61,24 @@ public class LoanSlipServlet extends HttpServlet {
         currentLoanDetails.add(loanDetail);
         session.setAttribute("currentLoanDetails", currentLoanDetails);
 
-        response.sendRedirect(request.getContextPath() + "/view/ManageLendingDocument.jsp");
+        response.sendRedirect("view/ManageLendingDocument.jsp");
     }
 
     private void saveLoan(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException, ServletException {
         Reader reader = (Reader) session.getAttribute("selectedReader");
-        Librarian librarian = (Librarian) session.getAttribute("loggedInLibrarian"); // Assuming librarian is in session
+        Librarian librarian = (Librarian) session.getAttribute("loggedInLibrarian");
         @SuppressWarnings("unchecked")
         List<LoanDetail> loanDetails = (List<LoanDetail>) session.getAttribute("currentLoanDetails");
 
-        if (reader != null && librarian != null && loanDetails != null && !loanDetails.isEmpty()) {
+        if (reader != null && loanDetails != null && !loanDetails.isEmpty()) {
+            // Tạo librarian giả nếu chưa có (để test)
+            if (librarian == null) {
+                librarian = new Librarian();
+                librarian.setId(4); // Giả định librarian ID = 4 từ database
+                librarian.setName("Librarian");
+                session.setAttribute("loggedInLibrarian", librarian);
+            }
+            
             LoanSlip loanSlip = new LoanSlip();
             loanSlip.setLoanDate(new Date());
             loanSlip.setReader(reader);
@@ -80,16 +88,23 @@ public class LoanSlipServlet extends HttpServlet {
             boolean isSaved = loanSlipDAO.saveLoan(loanSlip);
 
             if (isSaved) {
-                session.removeAttribute("selectedReader");
-                session.removeAttribute("currentLoanDetails");
+                // Lưu vào request để hiển thị, KHÔNG xóa session ngay
+                request.setAttribute("loanSlip", loanSlip);
                 request.setAttribute("message", "Phiếu mượn đã được lưu thành công!");
                 request.getRequestDispatcher("view/PrintLoanSlip.jsp").forward(request, response);
+                
+                // Xóa session sau khi forward thành công
+                session.removeAttribute("selectedReader");
+                session.removeAttribute("currentLoanDetails");
             } else {
                 request.setAttribute("error", "Lỗi khi lưu phiếu mượn.");
                 request.getRequestDispatcher("view/ManageLendingDocument.jsp").forward(request, response);
             }
         } else {
-            request.setAttribute("error", "Thông tin mượn không đầy đủ.");
+            String errorMsg = "Thông tin mượn không đầy đủ. ";
+            if (reader == null) errorMsg += "Chưa chọn bạn đọc. ";
+            if (loanDetails == null || loanDetails.isEmpty()) errorMsg += "Chưa có tài liệu nào.";
+            request.setAttribute("error", errorMsg);
             request.getRequestDispatcher("view/ManageLendingDocument.jsp").forward(request, response);
         }
     }

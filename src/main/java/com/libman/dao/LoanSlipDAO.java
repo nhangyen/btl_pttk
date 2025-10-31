@@ -10,13 +10,17 @@ import java.sql.Statement;
 public class LoanSlipDAO {
 
     public boolean saveLoan(LoanSlip loanSlip) {
-        String sqlLoanSlip = "INSERT INTO tblloanslip(loanDate, readerId, librarianId) VALUES(?, ?, ?)";
-        String sqlLoanDetail = "INSERT INTO tblloandetail(dueDate, documentId, loanSlipId) VALUES(?, ?, ?)";
+        // Schema mới:
+        // tblLoanSlip (ID, status, ReaderUserID, LibrarianUserID, ReturnSlipID)
+        // tblLoanDetail (ID, quantity, borrowdate, returndate, DocumentCopyID, LoanSlipID, ReturnSlipID, PenaltySlipID)
+        
+        String sqlLoanSlip = "INSERT INTO tblLoanSlip(status, ReaderUserID, LibrarianUserID) VALUES(?, ?, ?)";
+        String sqlLoanDetail = "INSERT INTO tblLoanDetail(quantity, borrowdate, returndate, DocumentCopyID, LoanSlipID) VALUES(?, ?, ?, ?, ?)";
         boolean success = false;
         try {
             DAOFactory.getConnection().setAutoCommit(false);
             try (PreparedStatement psLoanSlip = DAOFactory.getConnection().prepareStatement(sqlLoanSlip, Statement.RETURN_GENERATED_KEYS)) {
-                psLoanSlip.setDate(1, new java.sql.Date(loanSlip.getLoanDate().getTime()));
+                psLoanSlip.setString(1, "Active");
                 psLoanSlip.setInt(2, loanSlip.getReader().getId());
                 psLoanSlip.setInt(3, loanSlip.getLibrarian().getId());
                 psLoanSlip.executeUpdate();
@@ -24,11 +28,15 @@ public class LoanSlipDAO {
                 ResultSet generatedKeys = psLoanSlip.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int loanSlipId = generatedKeys.getInt(1);
+                    
+                    // Insert từng LoanDetail với LoanSlipID
                     for (LoanDetail detail : loanSlip.getLoanDetails()) {
                         try (PreparedStatement psLoanDetail = DAOFactory.getConnection().prepareStatement(sqlLoanDetail)) {
-                            psLoanDetail.setDate(1, new java.sql.Date(detail.getDueDate().getTime()));
-                            psLoanDetail.setInt(2, detail.getDocument().getId());
-                            psLoanDetail.setInt(3, loanSlipId);
+                            psLoanDetail.setInt(1, 1); // quantity = 1
+                            psLoanDetail.setDate(2, new java.sql.Date(loanSlip.getLoanDate().getTime())); // borrowdate
+                            psLoanDetail.setDate(3, new java.sql.Date(detail.getDueDate().getTime())); // returndate (due date)
+                            psLoanDetail.setInt(4, detail.getDocument().getId()); // DocumentCopyID
+                            psLoanDetail.setInt(5, loanSlipId); // LoanSlipID
                             psLoanDetail.executeUpdate();
                         }
                     }

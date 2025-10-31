@@ -1,31 +1,158 @@
-CREATE TABLE tblBookTitle (ID int(10) NOT NULL AUTO_INCREMENT, title varchar(255) NOT NULL, publisher varchar(255) NOT NULL, publicYear date NOT NULL, category varchar(255) NOT NULL, language varchar(255) NOT NULL, pageCount int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblDocument (ID int(10) NOT NULL AUTO_INCREMENT, `condition` int(10) NOT NULL, status varchar(255) NOT NULL, BookTitleBookTitleID int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblImportInvoice (ID int(10) NOT NULL AUTO_INCREMENT, quantity int(10) NOT NULL, `date` date NOT NULL, LibrarianLibrarianID int(10) NOT NULL, SupplierSupplierID int(10) NOT NULL, LibrarianUserID int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblInvoiceDetail (ID int(10) NOT NULL AUTO_INCREMENT, quantity int(10) NOT NULL, DocumentDocumentID int(10) NOT NULL, ImportInvoiceImportInvoiceID int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblLibrarian (role varchar(255) NOT NULL, UserID int(10) NOT NULL, PRIMARY KEY (UserID));
-CREATE TABLE tblLoanDetail (ID int(10) NOT NULL AUTO_INCREMENT, quantity int(10) NOT NULL, borrowdate date NOT NULL, returndate date NOT NULL, DocumentDocumentID int(10) NOT NULL, ReturnSlipReturnSlipID int(10) NOT NULL, PenaltySlipPenaltySlipID int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblLoanSlip (ID int(10) NOT NULL AUTO_INCREMENT, status varchar(255) NOT NULL, ReaderID int(10) NOT NULL, LibrarianID int(10) NOT NULL, LoanDetailLoanDetailID int(10) NOT NULL, ReturnSlipReturnSlipID int(10) NOT NULL, LibrarianUserID int(10) NOT NULL, ReaderUserID int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblManager (role varchar(255) NOT NULL, UserID int(10) NOT NULL, PRIMARY KEY (UserID));
-CREATE TABLE tblPenaltySlip (ID int(10) NOT NULL AUTO_INCREMENT, amount float NOT NULL, note varchar(255) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblReader (ReaderCount int(10), UserID int(10) NOT NULL, PRIMARY KEY (UserID));
-CREATE TABLE tblReaderCard (registrationDate date NOT NULL, cardID int(10) NOT NULL AUTO_INCREMENT, status varchar(255) NOT NULL, ReaderUserID int(10) NOT NULL, PRIMARY KEY (cardID));
-CREATE TABLE tblReturnSlip (ID int(10) NOT NULL AUTO_INCREMENT, returndate date NOT NULL, LibrarianLibrarianID int(10) NOT NULL, ReaderID int(10) NOT NULL, LibrarianUserID int(10) NOT NULL, ReaderUserID int(10) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblSupplier (ID int(10) NOT NULL AUTO_INCREMENT, name varchar(255) NOT NULL, address varchar(255) NOT NULL, description varchar(255) NOT NULL, PRIMARY KEY (ID));
-CREATE TABLE tblUser (ID int(10) NOT NULL AUTO_INCREMENT, username varchar(10) NOT NULL, password varchar(255) NOT NULL, name varchar(255) NOT NULL, dob date NOT NULL, gender varchar(10) NOT NULL, email varchar(255) NOT NULL, phoneNumber varchar(15) NOT NULL, address varchar(255) NOT NULL, PRIMARY KEY (ID));
-ALTER TABLE tblLoanSlip ADD CONSTRAINT FKtblLoanSli516430 FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
-ALTER TABLE tblLoanSlip ADD CONSTRAINT FKtblLoanSli458738 FOREIGN KEY (LibrarianUserID) REFERENCES tblLibrarian (UserID);
-ALTER TABLE tblManager ADD CONSTRAINT FKtblManager354359 FOREIGN KEY (UserID) REFERENCES tblUser (ID);
-ALTER TABLE tblLibrarian ADD CONSTRAINT FKtblLibrari351005 FOREIGN KEY (UserID) REFERENCES tblUser (ID);
-ALTER TABLE tblReader ADD CONSTRAINT FKtblReader499437 FOREIGN KEY (UserID) REFERENCES tblUser (ID);
-ALTER TABLE tblImportInvoice ADD CONSTRAINT FKtblImportI579771 FOREIGN KEY (LibrarianUserID) REFERENCES tblLibrarian (UserID);
-ALTER TABLE tblReturnSlip ADD CONSTRAINT FKtblReturnS662240 FOREIGN KEY (LibrarianUserID) REFERENCES tblLibrarian (UserID);
-ALTER TABLE tblDocument ADD CONSTRAINT FKtblDocumen3653 FOREIGN KEY (BookTitleBookTitleID) REFERENCES tblBookTitle (ID);
-ALTER TABLE tblInvoiceDetail ADD CONSTRAINT FKtblInvoice144741 FOREIGN KEY (DocumentDocumentID) REFERENCES tblDocument (ID);
-ALTER TABLE tblLoanDetail ADD CONSTRAINT FKtblLoanDet804415 FOREIGN KEY (DocumentDocumentID) REFERENCES tblDocument (ID);
-ALTER TABLE tblLoanSlip ADD CONSTRAINT FKtblLoanSli727430 FOREIGN KEY (LoanDetailLoanDetailID) REFERENCES tblLoanDetail (ID);
-ALTER TABLE tblLoanDetail ADD CONSTRAINT FKtblLoanDet867115 FOREIGN KEY (ReturnSlipReturnSlipID) REFERENCES tblReturnSlip (ID);
-ALTER TABLE tblReturnSlip ADD CONSTRAINT FKtblReturnS334181 FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
-ALTER TABLE tblInvoiceDetail ADD CONSTRAINT FKtblInvoice805365 FOREIGN KEY (ImportInvoiceImportInvoiceID) REFERENCES tblImportInvoice (ID);
-ALTER TABLE tblLoanDetail ADD CONSTRAINT FKtblLoanDet920427 FOREIGN KEY (PenaltySlipPenaltySlipID) REFERENCES tblPenaltySlip (ID);
-ALTER TABLE tblImportInvoice ADD CONSTRAINT FKtblImportI554985 FOREIGN KEY (SupplierSupplierID) REFERENCES tblSupplier (ID);
-ALTER TABLE tblReaderCard ADD CONSTRAINT FKtblReaderC626031 FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
+-- ========= TẠO BẢNG =========
+
+-- Bảng cơ sở
+CREATE TABLE tblUser (
+    ID INT NOT NULL AUTO_INCREMENT,
+    username varchar(50) NOT NULL,
+    password varchar(255) NOT NULL,
+    name varchar(255) NOT NULL,
+    dob date NOT NULL,
+    gender varchar(5) NOT NULL,
+    email varchar(255) NOT NULL,
+    phoneNumber varchar(15) NOT NULL,
+    address varchar(255) NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblSupplier (
+    ID INT NOT NULL AUTO_INCREMENT,
+    name varchar(255) NOT NULL,
+    address varchar(255) NOT NULL,
+    description varchar(255) NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblBookTitle (
+    ID INT NOT NULL AUTO_INCREMENT,
+    title varchar(255) NOT NULL,
+    publisher varchar(255) NOT NULL,
+    publicYear YEAR NOT NULL,
+    category varchar(255) NOT NULL,
+    language varchar(255) NOT NULL,
+    pageCount INT NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblPenaltySlip (
+    ID INT NOT NULL AUTO_INCREMENT,
+    amount float NOT NULL,
+    note varchar(255) NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+-- Bảng kế thừa từ tblUser
+CREATE TABLE tblLibrarian (
+    role varchar(255) NOT NULL,
+    UserID INT NOT NULL,
+    PRIMARY KEY (UserID)
+);
+
+CREATE TABLE tblManager (
+    role varchar(255) NOT NULL,
+    UserID INT NOT NULL,
+    PRIMARY KEY (UserID)
+);
+
+CREATE TABLE tblReader (
+    ReaderCount INT,
+    UserID INT NOT NULL,
+    PRIMARY KEY (UserID)
+);
+
+-- Bảng nghiệp vụ
+CREATE TABLE tblReaderCard (
+    registrationDate date NOT NULL,
+    cardID INT NOT NULL AUTO_INCREMENT,
+    status varchar(255) NOT NULL,
+    ReaderUserID INT NOT NULL,
+    PRIMARY KEY (cardID)
+);
+
+-- ĐỔI TÊN BẢNG: tblDocument -> tblDocumentCopy
+CREATE TABLE tblDocumentCopy (
+    ID INT NOT NULL AUTO_INCREMENT,
+    `condition` INT NOT NULL,
+    status varchar(255) NOT NULL,
+    BookTitleID INT NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblReturnSlip (
+    ID INT NOT NULL AUTO_INCREMENT,
+    returndate date NOT NULL,
+    LibrarianUserID INT NOT NULL,
+    ReaderUserID INT NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblImportInvoice (
+    ID INT NOT NULL AUTO_INCREMENT,
+    quantity INT NOT NULL,
+    `date` date NOT NULL,
+    LibrarianUserID INT NOT NULL,
+    SupplierID INT NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+-- Bảng chi tiết (Nhiều)
+CREATE TABLE tblInvoiceDetail (
+    ID INT NOT NULL AUTO_INCREMENT,
+    quantity INT NOT NULL,
+    DocumentCopyID INT NOT NULL, -- Đổi tên cột
+    ImportInvoiceID INT NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblLoanSlip (
+    ID INT NOT NULL AUTO_INCREMENT,
+    status varchar(255) NOT NULL,
+    ReaderUserID INT NOT NULL,
+    LibrarianUserID INT NOT NULL,
+    ReturnSlipID INT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE tblLoanDetail (
+    ID INT NOT NULL AUTO_INCREMENT,
+    quantity INT NOT NULL,
+    borrowdate date NOT NULL,
+    returndate date NOT NULL,
+    DocumentCopyID INT NOT NULL, -- Đổi tên cột
+    LoanSlipID INT NOT NULL,
+    ReturnSlipID INT NULL,
+    PenaltySlipID INT NULL,
+    PRIMARY KEY (ID)
+);
+
+-- ========= TẠO KHÓA NGOẠI =========
+
+-- Kế thừa User
+ALTER TABLE tblManager ADD CONSTRAINT FK_Manager_User FOREIGN KEY (UserID) REFERENCES tblUser (ID);
+ALTER TABLE tblLibrarian ADD CONSTRAINT FK_Librarian_User FOREIGN KEY (UserID) REFERENCES tblUser (ID);
+ALTER TABLE tblReader ADD CONSTRAINT FK_Reader_User FOREIGN KEY (UserID) REFERENCES tblUser (ID);
+
+-- Liên kết đến Librarian
+ALTER TABLE tblImportInvoice ADD CONSTRAINT FK_ImportInvoice_Librarian FOREIGN KEY (LibrarianUserID) REFERENCES tblLibrarian (UserID);
+ALTER TABLE tblReturnSlip ADD CONSTRAINT FK_ReturnSlip_Librarian FOREIGN KEY (LibrarianUserID) REFERENCES tblLibrarian (UserID);
+ALTER TABLE tblLoanSlip ADD CONSTRAINT FK_LoanSlip_Librarian FOREIGN KEY (LibrarianUserID) REFERENCES tblLibrarian (UserID);
+
+-- Liên kết đến Reader
+ALTER TABLE tblReaderCard ADD CONSTRAINT FK_ReaderCard_Reader FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
+ALTER TABLE tblReturnSlip ADD CONSTRAINT FK_ReturnSlip_Reader FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
+ALTER TABLE tblLoanSlip ADD CONSTRAINT FK_LoanSlip_Reader FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
+
+-- Liên kết đến Book/DocumentCopy (ĐÃ CẬP NHẬT)
+ALTER TABLE tblDocumentCopy ADD CONSTRAINT FK_DocumentCopy_BookTitle FOREIGN KEY (BookTitleID) REFERENCES tblBookTitle (ID);
+ALTER TABLE tblInvoiceDetail ADD CONSTRAINT FK_InvoiceDetail_DocumentCopy FOREIGN KEY (DocumentCopyID) REFERENCES tblDocumentCopy (ID);
+LOS
+ALTER TABLE tblLoanDetail ADD CONSTRAINT FK_LoanDetail_DocumentCopy FOREIGN KEY (DocumentCopyID) REFERENCES tblDocumentCopy (ID);
+
+-- Liên kết nghiệp vụ Nhập hàng
+ALTER TABLE tblImportInvoice ADD CONSTRAINT FK_ImportInvoice_Supplier FOREIGN KEY (SupplierID) REFERENCES tblSupplier (ID);
+ALTER TABLE tblInvoiceDetail ADD CONSTRAINT FK_InvoiceDetail_ImportInvoice FOREIGN KEY (ImportInvoiceID) REFERENCES tblImportInvoice (ID);
+
+-- Liên kết nghiệp vụ Mượn/Trả/Phạt
+ALTER TABLE tblLoanDetail ADD CONSTRAINT FK_LoanDetail_LoanSlip FOREIGN KEY (LoanSlipID) REFERENCES tblLoanSlip (ID);
+ALTER TABLE tblLoanDetail ADD CONSTRAINT FK_LoanDetail_ReturnSlip FOREIGN KEY (ReturnSlipID) REFERENCES tblReturnSlip (ID);
+ALTER TABLE tblLoanDetail ADD CONSTRAINT FK_LoanDetail_PenaltySlip FOREIGN KEY (PenaltySlipID) REFERENCES tblPenaltySlip (ID);
+ALTER TABLE tblLoanSlip ADD CONSTRAINT FK_LoanSlip_ReturnSlip FOREIGN KEY (ReturnSlipID) REFERENCES tblReturnSlip (ID);

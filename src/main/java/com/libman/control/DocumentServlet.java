@@ -37,8 +37,15 @@ public class DocumentServlet extends HttpServlet {
 
     private void searchDocument(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
+        
+        // Nếu không có keyword hoặc keyword rỗng, tìm tất cả (hiển thị mặc định)
+        if (keyword == null || keyword.trim().isEmpty()) {
+            keyword = ""; // Sẽ match tất cả trong LIKE query
+        }
+        
         List<Document> documents = documentDAO.getDocuments(keyword);
         request.setAttribute("documents", documents);
+        request.setAttribute("keyword", keyword);
         request.getRequestDispatcher("view/SearchDocumentView.jsp").forward(request, response);
     }
 

@@ -12,10 +12,10 @@ public class DocumentDAO {
 
     public List<Document> getDocuments(String keyword) {
         List<Document> documents = new ArrayList<>();
-        String sql = "SELECT d.ID, d.condition, d.status, d.BookTitleBookTitleID, " +
+        String sql = "SELECT d.ID, d.condition, d.status, d.BookTitleID, " +
                      "bt.ID as bt_id, bt.title, bt.publisher, bt.publicYear, bt.category, bt.language, bt.pageCount " +
-                     "FROM tblDocument d " +
-                     "LEFT JOIN tblBookTitle bt ON d.BookTitleBookTitleID = bt.ID " +
+                     "FROM tblDocumentCopy d " +
+                     "LEFT JOIN tblBookTitle bt ON d.BookTitleID = bt.ID " +
                      "WHERE bt.title LIKE ? OR bt.category LIKE ?";
         try (PreparedStatement ps = DAOFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");
@@ -26,7 +26,7 @@ public class DocumentDAO {
                 doc.setId(rs.getInt("ID"));
                 doc.setCondition(rs.getInt("condition"));
                 doc.setStatus(rs.getString("status"));
-                doc.setBookTitleId(rs.getInt("BookTitleBookTitleID"));
+                doc.setBookTitleId(rs.getInt("BookTitleID"));
                 
                 // Tạo BookTitle object
                 BookTitle bt = new BookTitle();
@@ -49,10 +49,10 @@ public class DocumentDAO {
 
     public Document getDocumentById(int id) {
         Document doc = null;
-        String sql = "SELECT d.ID, d.condition, d.status, d.BookTitleBookTitleID, " +
+        String sql = "SELECT d.ID, d.condition, d.status, d.BookTitleID, " +
                      "bt.ID as bt_id, bt.title, bt.publisher, bt.publicYear, bt.category, bt.language, bt.pageCount " +
-                     "FROM tblDocument d " +
-                     "LEFT JOIN tblBookTitle bt ON d.BookTitleBookTitleID = bt.ID " +
+                     "FROM tblDocumentCopy d " +
+                     "LEFT JOIN tblBookTitle bt ON d.BookTitleID = bt.ID " +
                      "WHERE d.ID = ?";
         try (PreparedStatement ps = DAOFactory.getConnection().prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -62,7 +62,7 @@ public class DocumentDAO {
                 doc.setId(rs.getInt("ID"));
                 doc.setCondition(rs.getInt("condition"));
                 doc.setStatus(rs.getString("status"));
-                doc.setBookTitleId(rs.getInt("BookTitleBookTitleID"));
+                doc.setBookTitleId(rs.getInt("BookTitleID"));
                 
                 // Tạo BookTitle object
                 BookTitle bt = new BookTitle();

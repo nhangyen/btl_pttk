@@ -45,8 +45,10 @@
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Doc ID</th>
+                    <th>Document ID</th>
                     <th>Title</th>
+                    <th>Publisher</th>
+                    <th>Category</th>
                     <th>Due Date</th>
                 </tr>
             </thead>
@@ -54,8 +56,10 @@
                 <c:forEach var="detail" items="${sessionScope.currentLoanDetails}" varStatus="status">
                     <tr>
                         <td>${status.index + 1}</td>
-                        <td>${detail.document.id}</td>
+                        <td><strong>#${detail.document.id}</strong></td>
                         <td>${detail.document.title}</td>
+                        <td>${detail.document.author}</td>
+                        <td>${detail.document.category}</td>
                         <td><fmt:formatDate value="${detail.dueDate}" pattern="dd/MM/yyyy"/></td>
                     </tr>
                 </c:forEach>

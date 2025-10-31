@@ -1,4 +1,4 @@
--- Sample data for testing Library Management System
+-- Sample data for testing Library Management System (ĐÃ SỬA LỖI)
 
 -- Insert Users
 INSERT INTO tblUser (ID, username, password, name, dob, gender, email, phoneNumber, address) VALUES
@@ -31,18 +31,20 @@ INSERT INTO tblReaderCard (cardID, registrationDate, status, ReaderUserID) VALUE
 (3, '2024-03-10', 'Active', 3);
 
 -- Insert Book Titles
+-- SỬA LỖI: publicYear giờ là kiểu YEAR, không phải DATE
 INSERT INTO tblBookTitle (ID, title, publisher, publicYear, category, language, pageCount) VALUES
-(1, 'Lập trình Java cơ bản', 'NXB Khoa học và Kỹ thuật', '2023-01-01', 'Công nghệ thông tin', 'Tiếng Việt', 350),
-(2, 'Cấu trúc dữ liệu và giải thuật', 'NXB Đại học Quốc gia', '2022-06-15', 'Công nghệ thông tin', 'Tiếng Việt', 420),
-(3, 'Clean Code', 'NXB Tre', '2023-03-20', 'Công nghệ thông tin', 'Tiếng Anh', 464),
-(4, 'Design Patterns', 'NXB Lao động', '2022-09-10', 'Công nghệ thông tin', 'Tiếng Anh', 395),
-(5, 'Toán cao cấp', 'NXB Giáo dục', '2023-08-25', 'Toán học', 'Tiếng Việt', 520),
-(6, 'Văn học Việt Nam hiện đại', 'NXB Văn học', '2023-05-12', 'Văn học', 'Tiếng Việt', 280),
-(7, 'Lịch sử Việt Nam', 'NXB Chính trị quốc gia', '2022-11-30', 'Lịch sử', 'Tiếng Việt', 450),
-(8, 'Kinh tế học đại cương', 'NXB Thống kê', '2023-02-18', 'Kinh tế', 'Tiếng Việt', 380);
+(1, 'Lập trình Java cơ bản', 'NXB Khoa học và Kỹ thuật', 2023, 'Công nghệ thông tin', 'Tiếng Việt', 350),
+(2, 'Cấu trúc dữ liệu và giải thuật', 'NXB Đại học Quốc gia', 2022, 'Công nghệ thông tin', 'Tiếng Việt', 420),
+(3, 'Clean Code', 'NXB Tre', 2023, 'Công nghệ thông tin', 'Tiếng Anh', 464),
+(4, 'Design Patterns', 'NXB Lao động', 2022, 'Công nghệ thông tin', 'Tiếng Anh', 395),
+(5, 'Toán cao cấp', 'NXB Giáo dục', 2023, 'Toán học', 'Tiếng Việt', 520),
+(6, 'Văn học Việt Nam hiện đại', 'NXB Văn học', 2023, 'Văn học', 'Tiếng Việt', 280),
+(7, 'Lịch sử Việt Nam', 'NXB Chính trị quốc gia', 2022, 'Lịch sử', 'Tiếng Việt', 450),
+(8, 'Kinh tế học đại cương', 'NXB Thống kê', 2023, 'Kinh tế', 'Tiếng Việt', 380);
 
--- Insert Documents (Physical copies)
-INSERT INTO tblDocument (ID, `condition`, status, BookTitleBookTitleID) VALUES
+-- Insert DocumentCopies (Physical copies)
+-- SỬA LỖI: Đổi tên cột BookTitleBookTitleID -> BookTitleID
+INSERT INTO tblDocumentCopy (ID, `condition`, status, BookTitleID) VALUES
 (1, 100, 'Available', 1),
 (2, 100, 'Available', 1),
 (3, 95, 'Available', 2),
@@ -63,13 +65,15 @@ INSERT INTO tblSupplier (ID, name, address, description) VALUES
 (3, 'Nhà sách Trí Tuệ', '789 Le Lai, Da Nang', 'Nhà sách chuyên ngành');
 
 -- Insert Import Invoices
-INSERT INTO tblImportInvoice (ID, quantity, `date`, LibrarianLibrarianID, SupplierSupplierID, LibrarianUserID) VALUES
-(1, 50, '2024-01-10', 4, 1, 4),
-(2, 30, '2024-02-15', 4, 2, 4),
-(3, 40, '2024-03-20', 5, 1, 5);
+-- SỬA LỖI: Bỏ cột thừa LibrarianLibrarianID và đổi SupplierSupplierID -> SupplierID
+INSERT INTO tblImportInvoice (ID, quantity, `date`, LibrarianUserID, SupplierID) VALUES
+(1, 50, '2024-01-10', 4, 1),
+(2, 30, '2024-02-15', 4, 2),
+(3, 40, '2024-03-20', 5, 1);
 
 -- Insert Invoice Details
-INSERT INTO tblInvoiceDetail (ID, quantity, DocumentDocumentID, ImportInvoiceImportInvoiceID) VALUES
+-- SỬA LỖI: Đổi tên cột DocumentDocumentID -> DocumentCopyID và ImportInvoiceImportInvoiceID -> ImportInvoiceID
+INSERT INTO tblInvoiceDetail (ID, quantity, DocumentCopyID, ImportInvoiceID) VALUES
 (1, 2, 1, 1),
 (2, 2, 2, 1),
 (3, 2, 3, 2),
