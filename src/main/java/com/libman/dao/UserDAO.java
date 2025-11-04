@@ -3,6 +3,7 @@ package com.libman.dao;
 import com.libman.model.User;
 import com.libman.model.Librarian;
 import com.libman.model.Reader;
+import com.libman.model.ReaderCard;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,10 +43,12 @@ public class UserDAO {
         }
         
         // Nếu không phải librarian, kiểm tra reader
-        String readerSql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, r.ReaderCount " +
-                           "FROM tblUser u " +
-                           "JOIN tblReader r ON u.ID = r.UserID " +
-                           "WHERE u.username = ? AND u.password = ?";
+    String readerSql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, r.ReaderCount, " +
+               "rc.cardID, rc.registrationDate, rc.status AS cardStatus " +
+               "FROM tblUser u " +
+               "JOIN tblReader r ON u.ID = r.UserID " +
+               "LEFT JOIN tblReaderCard rc ON r.UserID = rc.ReaderUserID " +
+               "WHERE u.username = ? AND u.password = ?";
         
         try (PreparedStatement ps = DAOFactory.getConnection().prepareStatement(readerSql)) {
             ps.setString(1, username);
@@ -64,6 +67,15 @@ public class UserDAO {
                 reader.setPhoneNumber(rs.getString("phoneNumber"));
                 reader.setAddress(rs.getString("address"));
                 reader.setReaderCount(rs.getObject("ReaderCount") != null ? rs.getInt("ReaderCount") : null);
+
+                if (rs.getObject("cardID") != null) {
+                    ReaderCard card = new ReaderCard();
+                    card.setCardId(rs.getInt("cardID"));
+                    card.setRegistrationDate(rs.getDate("registrationDate"));
+                    card.setStatus(rs.getString("cardStatus"));
+                    card.setReaderUserId(reader.getId());
+                    reader.setReaderCard(card);
+                }
                 return reader;
             }
         } catch (SQLException e) {

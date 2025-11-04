@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ReaderDAO {
-
     public Reader getReader(String keyword) {
         Reader reader = null;
         String sql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, " +
@@ -31,7 +30,7 @@ public class ReaderDAO {
                 reader.setEmail(rs.getString("email"));
                 reader.setPhoneNumber(rs.getString("phoneNumber"));
                 reader.setAddress(rs.getString("address"));
-                reader.setReaderCount(rs.getObject("ReaderCount") != null ? rs.getInt("ReaderCount") : null);
+                // reader.setReaderCount(rs.getObject("ReaderCount") != null ? rs.getInt("ReaderCount") : null);
                 
                 // Tạo ReaderCard nếu có
                 if (rs.getObject("cardID") != null) {

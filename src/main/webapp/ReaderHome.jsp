@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>Reader Home</title>
@@ -6,10 +8,63 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, Reader!</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>👤 Thông tin độc giả</h1>
+            <div>
+                <c:if test="${not empty sessionScope.user}">
+                    <a href="${pageContext.request.contextPath}/logout" class="btn-secondary">Đăng xuất</a>
+                </c:if>
+            </div>
+        </div>
+
+        <c:if test="${not empty sessionScope.user}">
+            <div class="info-box">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+                    <div>
+                        <p><strong>Mã độc giả:</strong> ${sessionScope.user.id}</p>
+                        <p><strong>Tên đăng nhập:</strong> ${sessionScope.user.username}</p>
+                        <p><strong>Họ và tên:</strong> ${sessionScope.user.name}</p>
+                        <p><strong>Email:</strong> ${sessionScope.user.email}</p>
+                        <p><strong>Số điện thoại:</strong> ${sessionScope.user.phoneNumber}</p>
+                    </div>
+                    <div>
+                        <p><strong>Ngày sinh:</strong>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.user.dob}">
+                                    <fmt:formatDate value="${sessionScope.user.dob}" pattern="dd/MM/yyyy"/>
+                                </c:when>
+                                <c:otherwise>Chưa cập nhật</c:otherwise>
+                            </c:choose>
+                        </p>
+                        <p><strong>Giới tính:</strong> ${empty sessionScope.user.gender ? 'Chưa cập nhật' : sessionScope.user.gender}</p>
+                        <p><strong>Địa chỉ:</strong> ${empty sessionScope.user.address ? 'Chưa cập nhật' : sessionScope.user.address}</p>
+                        <!-- <c:if test="${not empty sessionScope.user.readerCount}">
+                            <p><strong>Số lượt mượn:</strong> ${sessionScope.user.readerCount}</p>
+                        </c:if> -->
+                        <!-- <c:if test="${empty sessionScope.user.readerCount}">
+                            <p><strong>Số lượt mượn:</strong> 0</p>
+                        </c:if> -->
+                    </div>
+                    <c:if test="${not empty sessionScope.user.readerCard}">
+                        <div>
+                            <p><strong>Mã thẻ:</strong> #${sessionScope.user.readerCard.cardId}</p>
+                            <p><strong>Ngày đăng ký:</strong>
+                                <fmt:formatDate value="${sessionScope.user.readerCard.registrationDate}" pattern="dd/MM/yyyy"/>
+                            </p>
+                            <p><strong>Trạng thái thẻ:</strong>
+                                <span class="status status-${sessionScope.user.readerCard.status == 'ACTIVE' ? 'available' : 'borrowed'}">
+                                    ${sessionScope.user.readerCard.status}
+                                </span>
+                            </p>
+                        </div>
+                    </c:if>
+                </div>
+            </div>
+        </c:if>
+
+        <h2>📚 Chức năng nhanh</h2>
         <div class="nav-links">
-            <a href="view/SearchDocumentView.jsp">Search for Documents</a>
-            <a href="index.jsp" class="btn-secondary">Back to Home</a>
+            <a href="${pageContext.request.contextPath}/searchDocument" class="btn">Tìm kiếm đầu sách</a>
         </div>
     </div>
 </body>

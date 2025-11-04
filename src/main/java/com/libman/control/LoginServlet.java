@@ -38,9 +38,9 @@ public class LoginServlet extends HttpServlet {
             
             // Redirect đến trang chủ phù hợp
             if (user instanceof Librarian) {
-                response.sendRedirect(request.getContextPath() + "/view/ManageLendingDocument.jsp");
+                response.sendRedirect(request.getContextPath() + "/LibrarianHome.jsp");
             } else {
-                response.sendRedirect(request.getContextPath() + "/view/SearchDocumentView.jsp");
+                response.sendRedirect(request.getContextPath() + "/ReaderHome.jsp");
             }
         } else {
             request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
