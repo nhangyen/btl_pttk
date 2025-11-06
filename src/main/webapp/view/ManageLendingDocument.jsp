@@ -174,7 +174,7 @@
         <div class="action-buttons">
             <div class="nav-links">
                 <a href="${pageContext.request.contextPath}/view/ScanReaderCard.jsp" class="btn">🔍 Tìm độc giả</a>
-                <a href="${pageContext.request.contextPath}/searchDocument" class="btn">📚 Tìm tài liệu</a>
+                <a href="${pageContext.request.contextPath}/searchBookTitle" class="btn">📚 Tìm tài liệu</a>
                 <c:if test="${not empty sessionScope.selectedReader && not empty sessionScope.currentLoanDetails}">
                     <form action="${pageContext.request.contextPath}/lending" method="post" style="display: inline; margin: 0;">
                         <input type="hidden" name="action" value="saveLoan">
@@ -213,7 +213,7 @@
                     </div>
                     <div class="scrollable-content">
                         <div class="info-box">
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                            <div style="display: flex; gap: 15px; align-items: flex-start;">
                                 <div>
                                     <p><strong>Mã độc giả:</strong> #${sessionScope.selectedReader.id}</p>
                                     <p><strong>Họ tên:</strong> ${sessionScope.selectedReader.name}</p>
@@ -229,6 +229,9 @@
                                         </p>
                                     </c:if>
                                 </div>
+                                <c:if test="${not empty sessionScope.selectedReader.readerCard && not empty sessionScope.selectedReader.readerCard.path}">
+                                    <img src="${pageContext.request.contextPath}/${sessionScope.selectedReader.readerCard.path}" alt="Reader Card Image" style="max-width: 100px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                </c:if>
                             </div>
                         </div>
 

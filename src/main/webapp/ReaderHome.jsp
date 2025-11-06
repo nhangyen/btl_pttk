@@ -67,7 +67,7 @@
 
         <h2>📚 Chức năng nhanh</h2>
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/searchDocument" class="btn">Tìm kiếm đầu sách</a>
+            <a href="${pageContext.request.contextPath}/searchBookTitle" class="btn">Tìm kiếm đầu sách</a>
         </div>
     </div>
 </body>

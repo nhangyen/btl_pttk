@@ -1,4 +1,4 @@
-package com.libman.dao;
+﻿package com.libman.dao;
 
 import com.libman.model.DocumentCopy;
 import com.libman.model.BookTitle;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DocumentDAO {
+public class DocumentCopyDAO {
 
     public List<DocumentCopy> getDocuments(String keyword) {
         List<DocumentCopy> documents = new ArrayList<>();
@@ -103,11 +103,11 @@ public class DocumentDAO {
 
     public List<DocumentCopy> getDocumentCopiesByBookTitle(int bookTitleId) {
         List<DocumentCopy> copies = new ArrayList<>();
-        String sql = "SELECT d.ID, d.condition, d.status, d.BookTitleID, "
-                   + "bt.ID AS bt_id, bt.title, bt.publisher, bt.publicYear, bt.category, bt.language, bt.pageCount "
-                   + "FROM tblDocumentCopy d "
-                   + "LEFT JOIN tblBookTitle bt ON d.BookTitleID = bt.ID "
-                   + "WHERE d.BookTitleID = ? ORDER BY d.ID";
+        String sql = "SELECT d.ID, d.condition, d.status, d.BookTitleID, " +
+                     "bt.ID AS bt_id, bt.title, bt.publisher, bt.publicYear, bt.category, bt.language, bt.pageCount " +
+                     "FROM tblDocumentCopy d " +
+                     "LEFT JOIN tblBookTitle bt ON d.BookTitleID = bt.ID " +
+                     "WHERE d.BookTitleID = ? ORDER BY d.ID";
 
         try (PreparedStatement ps = DAOFactory.getConnection().prepareStatement(sql)) {
             ps.setInt(1, bookTitleId);

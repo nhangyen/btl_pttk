@@ -8,8 +8,7 @@
 <body>
     <div class="container">
         <h1>📖 Scan or Search for Document</h1>
-        <form action="${pageContext.request.contextPath}/searchDocument" method="get">
-            <input type="hidden" name="action" value="search">
+        <form action="${pageContext.request.contextPath}/searchBookTitle" method="get">
             <input type="text" name="keyword" placeholder="Enter document title or category" value="${keyword}">
             <button type="submit">🔍 Search</button>
         </form>
@@ -67,8 +66,8 @@
         // Load documents on page load
         window.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (!urlParams.has('keyword') && !urlParams.has('action')) {
-                window.location.href = '${pageContext.request.contextPath}/searchDocument?action=search&keyword=';
+            if (!urlParams.has('keyword')) {
+                window.location.href = '${pageContext.request.contextPath}/searchBookTitle?keyword=';
             }
         });
     </script>

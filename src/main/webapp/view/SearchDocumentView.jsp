@@ -241,8 +241,7 @@
         </div>
 
         <div class="search-section">
-            <form action="${pageContext.request.contextPath}/searchDocument" method="get">
-                <input type="hidden" name="action" value="search">
+            <form action="${pageContext.request.contextPath}/searchBookTitle" method="get">
                 <input type="text" name="keyword" placeholder="Nhập tên sách, thể loại hoặc nhà xuất bản..." value="${keyword}">
                 <button type="submit">🔍 Tìm kiếm</button>
             </form>
@@ -279,8 +278,7 @@
                             <td>${empty bt.language ? 'N/A' : bt.language}</td>
                             <td>${bt.pageCount > 0 ? bt.pageCount : 'N/A'}</td>
                             <td>
-                                <c:url var="detailUrl" value="/searchDocument">
-                                    <c:param name="action" value="detail" />
+                                <c:url var="detailUrl" value="/documentDetail">
                                     <c:param name="id" value="${bt.id}" />
                                     <c:param name="keyword" value="${keyword}" />
                                 </c:url>
@@ -412,8 +410,8 @@
     <script>
         window.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (!urlParams.has('keyword') && !urlParams.has('action')) {
-                window.location.href = '${pageContext.request.contextPath}/searchDocument?action=search&keyword=';
+            if (!urlParams.has('keyword')) {
+                window.location.href = '${pageContext.request.contextPath}/searchBookTitle?keyword=';
             }
 
             document.querySelectorAll('.document-copy-item').forEach(function(item) {
