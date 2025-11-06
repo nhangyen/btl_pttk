@@ -2,9 +2,9 @@ package com.libman.dao;
 
 import com.libman.model.DocumentCopy;
 import com.libman.model.BookTitle;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,33 @@ public class DocumentDAO {
             ps.setString(2, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                documents.add(mapToDocumentCopy(rs));
+                DocumentCopy doc = new DocumentCopy();
+                doc.setId(rs.getInt("ID"));
+                doc.setCondition(rs.getInt("condition"));
+                doc.setStatus(rs.getString("status"));
+
+                BookTitle bt = new BookTitle();
+                try {
+                    bt.setId(rs.getInt("bt_id"));
+                } catch (SQLException ignored) {
+                    bt.setId(rs.getInt("BookTitleID"));
+                }
+                bt.setTitle(rs.getString("title"));
+                bt.setPublisher(rs.getString("publisher"));
+                bt.setCategory(rs.getString("category"));
+                bt.setLanguage(rs.getString("language"));
+                bt.setPageCount(rs.getInt("pageCount"));
+
+                try {
+                    String yearString = rs.getString("publicYear");
+                    if (yearString != null && !yearString.isEmpty()) {
+                        bt.setPublicationYear(Integer.parseInt(yearString));
+                    }
+                } catch (SQLException | NumberFormatException ignored) {
+                }
+
+                doc.setBookTitle(bt);
+                documents.add(doc);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -42,7 +68,32 @@ public class DocumentDAO {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                doc = mapToDocumentCopy(rs);
+                doc = new DocumentCopy();
+                doc.setId(rs.getInt("ID"));
+                doc.setCondition(rs.getInt("condition"));
+                doc.setStatus(rs.getString("status"));
+
+                BookTitle bt = new BookTitle();
+                try {
+                    bt.setId(rs.getInt("bt_id"));
+                } catch (SQLException ignored) {
+                    bt.setId(rs.getInt("BookTitleID"));
+                }
+                bt.setTitle(rs.getString("title"));
+                bt.setPublisher(rs.getString("publisher"));
+                bt.setCategory(rs.getString("category"));
+                bt.setLanguage(rs.getString("language"));
+                bt.setPageCount(rs.getInt("pageCount"));
+
+                try {
+                    String yearString = rs.getString("publicYear");
+                    if (yearString != null && !yearString.isEmpty()) {
+                        bt.setPublicationYear(Integer.parseInt(yearString));
+                    }
+                } catch (SQLException | NumberFormatException ignored) {
+                }
+
+                doc.setBookTitle(bt);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,7 +113,33 @@ public class DocumentDAO {
             ps.setInt(1, bookTitleId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                copies.add(mapToDocumentCopy(rs));
+                DocumentCopy doc = new DocumentCopy();
+                doc.setId(rs.getInt("ID"));
+                doc.setCondition(rs.getInt("condition"));
+                doc.setStatus(rs.getString("status"));
+
+                BookTitle bt = new BookTitle();
+                try {
+                    bt.setId(rs.getInt("bt_id"));
+                } catch (SQLException ignored) {
+                    bt.setId(rs.getInt("BookTitleID"));
+                }
+                bt.setTitle(rs.getString("title"));
+                bt.setPublisher(rs.getString("publisher"));
+                bt.setCategory(rs.getString("category"));
+                bt.setLanguage(rs.getString("language"));
+                bt.setPageCount(rs.getInt("pageCount"));
+
+                try {
+                    String yearString = rs.getString("publicYear");
+                    if (yearString != null && !yearString.isEmpty()) {
+                        bt.setPublicationYear(Integer.parseInt(yearString));
+                    }
+                } catch (SQLException | NumberFormatException ignored) {
+                }
+
+                doc.setBookTitle(bt);
+                copies.add(doc);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -70,50 +147,40 @@ public class DocumentDAO {
         return copies;
     }
 
-    private DocumentCopy mapToDocumentCopy(ResultSet rs) throws SQLException {
-        DocumentCopy doc = new DocumentCopy();
-        doc.setId(rs.getInt("ID"));
-        doc.setCondition(rs.getInt("condition"));
-        doc.setStatus(rs.getString("status"));
-
-        BookTitle bt = new BookTitle();
-        try {
-            bt.setId(rs.getInt("bt_id"));
-        } catch (SQLException ignored) {
-            bt.setId(rs.getInt("BookTitleID"));
-        }
-        bt.setTitle(rs.getString("title"));
-        bt.setPublisher(rs.getString("publisher"));
-        bt.setCategory(rs.getString("category"));
-        bt.setLanguage(rs.getString("language"));
-        bt.setPageCount(rs.getInt("pageCount"));
-
-        try {
-            String yearString = rs.getString("publicYear");
-            if (yearString != null && !yearString.isEmpty()) {
-                bt.setPublicationYear(Integer.parseInt(yearString));
-            }
-        } catch (SQLException | NumberFormatException ignored) {
-            // Bỏ qua nếu không lấy được năm xuất bản
+    public boolean markAsBorrowed(Connection connection, DocumentCopy documentCopy) {
+        if (connection == null || documentCopy == null) {
+            return false;
         }
 
-        if (hasColumn(rs, "author")) {
-            bt.setAuthor(rs.getString("author"));
-        }
-        if (hasColumn(rs, "description")) {
-            bt.setDescription(rs.getString("description"));
-        }
-
-        doc.setBookTitle(bt);
-        return doc;
-    }
-
-    private boolean hasColumn(ResultSet rs, String column) throws SQLException {
-        ResultSetMetaData metaData = rs.getMetaData();
-        for (int i = 1; i <= metaData.getColumnCount(); i++) {
-            if (column.equalsIgnoreCase(metaData.getColumnLabel(i))) {
+        String sql = "UPDATE tblDocumentCopy SET status = 'Borrowed' WHERE ID = ? AND status = 'Available'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, documentCopy.getId());
+            int updated = ps.executeUpdate();
+            if (updated > 0) {
+                documentCopy.setStatus("Borrowed");
                 return true;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean markAsAvailable(Connection connection, DocumentCopy documentCopy) {
+        if (connection == null || documentCopy == null) {
+            return false;
+        }
+
+        String sql = "UPDATE tblDocumentCopy SET status = 'Available' WHERE ID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, documentCopy.getId());
+            int updated = ps.executeUpdate();
+            if (updated > 0) {
+                documentCopy.setStatus("Available");
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }

@@ -25,8 +25,9 @@ CREATE TABLE tblSupplier (
 CREATE TABLE tblBookTitle (
     ID INT NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
+    author varchar(255) NOT NULL,
     publisher varchar(255) NOT NULL,
-    publicYear YEAR NOT NULL,
+    publicYear YEAR NOT NULL, -- Giữ nguyên kiểu YEAR vì đúng logic
     category varchar(255) NOT NULL,
     language varchar(255) NOT NULL,
     pageCount INT NOT NULL,
@@ -35,7 +36,8 @@ CREATE TABLE tblBookTitle (
 
 CREATE TABLE tblPenaltySlip (
     ID INT NOT NULL AUTO_INCREMENT,
-    amount float NOT NULL,
+    -- Giữ nguyên kiểu DECIMAL vì 'float' trong ERD là sai cho tiền tệ
+    amount DECIMAL(15, 0) NOT NULL, 
     note varchar(255) NOT NULL,
     PRIMARY KEY (ID)
 );
@@ -54,7 +56,8 @@ CREATE TABLE tblManager (
 );
 
 CREATE TABLE tblReader (
-    ReaderCount INT,
+    -- SỬA: Đổi 'borrowLimit' thành 'note' để khớp với ERD mới
+    note varchar(255) NULL, 
     UserID INT NOT NULL,
     PRIMARY KEY (UserID)
 );
@@ -64,15 +67,16 @@ CREATE TABLE tblReaderCard (
     registrationDate date NOT NULL,
     cardID INT NOT NULL AUTO_INCREMENT,
     status varchar(255) NOT NULL,
+    path varchar(255) NULL,
     ReaderUserID INT NOT NULL,
     PRIMARY KEY (cardID)
 );
 
--- ĐỔI TÊN BẢNG: tblDocument -> tblDocumentCopy
 CREATE TABLE tblDocumentCopy (
     ID INT NOT NULL AUTO_INCREMENT,
     `condition` INT NOT NULL,
     status varchar(255) NOT NULL,
+    -- Giữ 'BookTitleID' (thay vì 'BookTitleBookTitleID' trong ERD) vì nó sạch hơn và khớp với các bản sửa lỗi trước đó
     BookTitleID INT NOT NULL,
     PRIMARY KEY (ID)
 );
@@ -82,12 +86,15 @@ CREATE TABLE tblReturnSlip (
     returndate date NOT NULL,
     LibrarianUserID INT NOT NULL,
     ReaderUserID INT NOT NULL,
+    -- GHI CHÚ: ERD mới và SQL cũ của bạn đều không có 'penaltyAmount'. 
+    -- Nếu bạn muốn thêm nó (như trong sơ đồ lớp), hãy bỏ ghi chú dòng sau:
+    -- penaltyAmount DECIMAL(15, 0) NULL,
     PRIMARY KEY (ID)
 );
 
 CREATE TABLE tblImportInvoice (
     ID INT NOT NULL AUTO_INCREMENT,
-    quantity INT NOT NULL,
+    -- SỬA: Đã bỏ cột 'quantity' để khớp với ERD mới và logic phi chuẩn hóa
     `date` date NOT NULL,
     LibrarianUserID INT NOT NULL,
     SupplierID INT NOT NULL,
@@ -97,8 +104,9 @@ CREATE TABLE tblImportInvoice (
 -- Bảng chi tiết (Nhiều)
 CREATE TABLE tblInvoiceDetail (
     ID INT NOT NULL AUTO_INCREMENT,
-    quantity INT NOT NULL,
-    DocumentCopyID INT NOT NULL, -- Đổi tên cột
+    -- SỬA: Đã bỏ 'quantity' và thêm 'price' để khớp với ERD mới
+    price DECIMAL(15, 0) NOT NULL,
+    DocumentCopyID INT NOT NULL, 
     ImportInvoiceID INT NOT NULL,
     PRIMARY KEY (ID)
 );
@@ -114,10 +122,10 @@ CREATE TABLE tblLoanSlip (
 
 CREATE TABLE tblLoanDetail (
     ID INT NOT NULL AUTO_INCREMENT,
-    quantity INT NOT NULL,
+    -- SỬA: Đã bỏ cột 'quantity' để khớp với ERD mới
     borrowdate date NOT NULL,
     returndate date NOT NULL,
-    DocumentCopyID INT NOT NULL, -- Đổi tên cột
+    DocumentCopyID INT NOT NULL, 
     LoanSlipID INT NOT NULL,
     ReturnSlipID INT NULL,
     PenaltySlipID INT NULL,
@@ -141,7 +149,7 @@ ALTER TABLE tblReaderCard ADD CONSTRAINT FK_ReaderCard_Reader FOREIGN KEY (Reade
 ALTER TABLE tblReturnSlip ADD CONSTRAINT FK_ReturnSlip_Reader FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
 ALTER TABLE tblLoanSlip ADD CONSTRAINT FK_LoanSlip_Reader FOREIGN KEY (ReaderUserID) REFERENCES tblReader (UserID);
 
--- Liên kết đến Book/DocumentCopy (ĐÃ CẬP NHẬT)
+-- Liên kết đến Book/DocumentCopy
 ALTER TABLE tblDocumentCopy ADD CONSTRAINT FK_DocumentCopy_BookTitle FOREIGN KEY (BookTitleID) REFERENCES tblBookTitle (ID);
 ALTER TABLE tblInvoiceDetail ADD CONSTRAINT FK_InvoiceDetail_DocumentCopy FOREIGN KEY (DocumentCopyID) REFERENCES tblDocumentCopy (ID);
 ALTER TABLE tblLoanDetail ADD CONSTRAINT FK_LoanDetail_DocumentCopy FOREIGN KEY (DocumentCopyID) REFERENCES tblDocumentCopy (ID);

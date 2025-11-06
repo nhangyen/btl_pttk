@@ -6,14 +6,18 @@ import java.util.Date;
 public class LoanDetail implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
+    private Date borrowDate;
+    private Date returnDate;
     private Date dueDate;
     private DocumentCopy documentCopy;
 
     public LoanDetail() {
     }
 
-    public LoanDetail(int id, Date dueDate, DocumentCopy documentCopy) {
+    public LoanDetail(int id, Date borrowDate, Date returnDate, Date dueDate, DocumentCopy documentCopy) {
         this.id = id;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
         this.dueDate = dueDate;
         this.documentCopy = documentCopy;
     }
@@ -25,6 +29,22 @@ public class LoanDetail implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Date getBorrowDate() {
+        return borrowDate;
+    }
+
+    public void setBorrowDate(Date borrowDate) {
+        this.borrowDate = borrowDate;
+    }
+
+    public Date getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(Date returnDate) {
+        this.returnDate = returnDate;
     }
 
     public Date getDueDate() {

@@ -5,7 +5,7 @@ import java.util.Date;
 public class Reader extends User {
     private static final long serialVersionUID = 1L;
     
-    private Integer readerCount;
+    private String note;
     private ReaderCard readerCard;
 
     public Reader() {
@@ -13,17 +13,17 @@ public class Reader extends User {
     }
 
     public Reader(int id, String username, String password, String name, Date dob, String gender, 
-                  String email, String phoneNumber, String address, Integer readerCount) {
+                  String email, String phoneNumber, String address, String note) {
         super(id, username, password, name, dob, gender, email, phoneNumber, address);
-        this.readerCount = readerCount;
+        this.note = note;
     }
 
-    public Integer getReaderCount() {
-        return readerCount;
+    public String getNote() {
+        return note;
     }
 
-    public void setReaderCount(Integer readerCount) {
-        this.readerCount = readerCount;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public ReaderCard getReaderCard() {

@@ -2,7 +2,11 @@ package com.libman.control;
 
 import com.libman.dao.DocumentDAO;
 import com.libman.dao.LoanSlipDAO;
-import com.libman.model.*;
+import com.libman.model.DocumentCopy;
+import com.libman.model.Librarian;
+import com.libman.model.LoanDetail;
+import com.libman.model.LoanSlip;
+import com.libman.model.Reader;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -42,24 +46,55 @@ public class LoanSlipServlet extends HttpServlet {
         String dueDateStr = request.getParameter("dueDate");
 
         DocumentCopy doc = new DocumentDAO().getDocumentById(docId);
-        Date dueDate = null;
-        try {
-            dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        
+        if (doc == null) {
+            session.removeAttribute("success");
+            session.setAttribute("error", "Không tìm thấy tài liệu với ID: " + docId);
+            response.sendRedirect("view/ManageLendingDocument.jsp");
+            return;
         }
 
-        LoanDetail loanDetail = new LoanDetail();
-        loanDetail.setDocumentCopy(doc);
-        loanDetail.setDueDate(dueDate);
+        if ("Borrowed".equalsIgnoreCase(doc.getStatus())) {
+            session.removeAttribute("success");
+            session.setAttribute("error", "Tài liệu '" + doc.getBookTitle().getTitle() +
+                    "' (ID: " + docId + ") đang được mượn, không thể thêm vào giỏ mượn!");
+            response.sendRedirect("view/ManageLendingDocument.jsp");
+            return;
+        }
 
         @SuppressWarnings("unchecked")
         List<LoanDetail> currentLoanDetails = (List<LoanDetail>) session.getAttribute("currentLoanDetails");
         if (currentLoanDetails == null) {
             currentLoanDetails = new ArrayList<>();
         }
+
+        for (LoanDetail detail : currentLoanDetails) {
+            if (detail.getDocumentCopy().getId() == docId) {
+                session.removeAttribute("success");
+                session.setAttribute("error", "Tài liệu này đã có trong giỏ mượn!");
+                response.sendRedirect("view/ManageLendingDocument.jsp");
+                return;
+            }
+        }
+
+        Date dueDate;
+        try {
+            dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateStr);
+        } catch (ParseException e) {
+            session.removeAttribute("success");
+            session.setAttribute("error", "Ngày hẹn trả không hợp lệ!");
+            response.sendRedirect("view/ManageLendingDocument.jsp");
+            return;
+        }
+
+        LoanDetail loanDetail = new LoanDetail();
+        loanDetail.setDocumentCopy(doc);
+        loanDetail.setDueDate(dueDate);
+
         currentLoanDetails.add(loanDetail);
         session.setAttribute("currentLoanDetails", currentLoanDetails);
+    session.removeAttribute("error");
+        session.setAttribute("success", "Đã thêm tài liệu vào giỏ mượn thành công!");
 
         response.sendRedirect("view/ManageLendingDocument.jsp");
     }
@@ -80,7 +115,8 @@ public class LoanSlipServlet extends HttpServlet {
             }
             
             LoanSlip loanSlip = new LoanSlip();
-            loanSlip.setLoanDate(new Date());
+            loanSlip.setBorrowDate(new Date());
+            loanSlip.setStatus("Active");
             loanSlip.setReader(reader);
             loanSlip.setLibrarian(librarian);
             loanSlip.setLoanDetails(loanDetails);
@@ -89,6 +125,8 @@ public class LoanSlipServlet extends HttpServlet {
 
             if (isSaved) {
                 // Lưu vào request để hiển thị, KHÔNG xóa session ngay
+                session.removeAttribute("error");
+                session.removeAttribute("success");
                 request.setAttribute("loanSlip", loanSlip);
                 request.setAttribute("message", "Phiếu mượn đã được lưu thành công!");
                 request.getRequestDispatcher("view/PrintLoanSlip.jsp").forward(request, response);
@@ -97,7 +135,8 @@ public class LoanSlipServlet extends HttpServlet {
                 session.removeAttribute("selectedReader");
                 session.removeAttribute("currentLoanDetails");
             } else {
-                request.setAttribute("error", "Lỗi khi lưu phiếu mượn.");
+                session.removeAttribute("success");
+                request.setAttribute("error", "Lỗi khi lưu phiếu mượn. Có thể một hoặc nhiều tài liệu đã được mượn bởi bạn đọc khác.");
                 request.getRequestDispatcher("view/ManageLendingDocument.jsp").forward(request, response);
             }
         } else {

@@ -43,8 +43,8 @@ public class UserDAO {
         }
         
         // Nếu không phải librarian, kiểm tra reader
-    String readerSql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, r.ReaderCount, " +
-               "rc.cardID, rc.registrationDate, rc.status AS cardStatus " +
+    String readerSql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, r.note, " +
+               "rc.cardID, rc.registrationDate, rc.status AS cardStatus, rc.path AS cardPath " +
                "FROM tblUser u " +
                "JOIN tblReader r ON u.ID = r.UserID " +
                "LEFT JOIN tblReaderCard rc ON r.UserID = rc.ReaderUserID " +
@@ -66,7 +66,7 @@ public class UserDAO {
                 reader.setEmail(rs.getString("email"));
                 reader.setPhoneNumber(rs.getString("phoneNumber"));
                 reader.setAddress(rs.getString("address"));
-                reader.setReaderCount(rs.getObject("ReaderCount") != null ? rs.getInt("ReaderCount") : null);
+                reader.setNote(rs.getString("note"));
 
                 if (rs.getObject("cardID") != null) {
                     ReaderCard card = new ReaderCard();
@@ -74,6 +74,7 @@ public class UserDAO {
                     card.setRegistrationDate(rs.getDate("registrationDate"));
                     card.setStatus(rs.getString("cardStatus"));
                     card.setReaderUserId(reader.getId());
+                    card.setPath(rs.getString("cardPath"));
                     reader.setReaderCard(card);
                 }
                 return reader;

@@ -1,4 +1,4 @@
--- Sample data for testing Library Management System (ĐÃ SỬA LỖI)
+-- Dữ liệu mẫu cho Hệ thống Quản lý Thư viện (ĐÃ SỬA THEO ERD MỚI)
 
 -- Insert Users
 INSERT INTO tblUser (ID, username, password, name, dob, gender, email, phoneNumber, address) VALUES
@@ -10,10 +10,11 @@ INSERT INTO tblUser (ID, username, password, name, dob, gender, email, phoneNumb
 (6, 'manager1', 'pass123', 'Vu Thi F', '1985-07-18', 'Nu', 'vuthif@email.com', '0956789012', '987 Ly Thuong Kiet, Ha Noi');
 
 -- Insert Readers
-INSERT INTO tblReader (UserID, ReaderCount) VALUES
-(1, 5),
-(2, 3),
-(3, 8);
+-- SỬA: Đã đổi cột 'ReaderCount' thành 'note' để khớp với CSDL mới
+INSERT INTO tblReader (UserID, note) VALUES
+(1, 'Ghi chú cho đọc giả A'),
+(2, NULL),
+(3, 'Đọc giả VIP');
 
 -- Insert Librarians
 INSERT INTO tblLibrarian (UserID, role) VALUES
@@ -25,25 +26,23 @@ INSERT INTO tblManager (UserID, role) VALUES
 (6, 'Quan Ly');
 
 -- Insert Reader Cards
-INSERT INTO tblReaderCard (cardID, registrationDate, status, ReaderUserID) VALUES
-(1, '2024-01-15', 'Active', 1),
-(2, '2024-02-20', 'Active', 2),
-(3, '2024-03-10', 'Active', 3);
+INSERT INTO tblReaderCard (cardID, registrationDate, status, path, ReaderUserID) VALUES
+(1, '2024-01-15', 'Active', 'images/1.jpg', 1),
+(2, '2024-02-20', 'Active', 'images/2.jpg', 2),
+(3, '2024-03-10', 'Active', NULL, 3);
 
 -- Insert Book Titles
--- SỬA LỖI: publicYear giờ là kiểu YEAR, không phải DATE
-INSERT INTO tblBookTitle (ID, title, publisher, publicYear, category, language, pageCount) VALUES
-(1, 'Lập trình Java cơ bản', 'NXB Khoa học và Kỹ thuật', 2023, 'Công nghệ thông tin', 'Tiếng Việt', 350),
-(2, 'Cấu trúc dữ liệu và giải thuật', 'NXB Đại học Quốc gia', 2022, 'Công nghệ thông tin', 'Tiếng Việt', 420),
-(3, 'Clean Code', 'NXB Tre', 2023, 'Công nghệ thông tin', 'Tiếng Anh', 464),
-(4, 'Design Patterns', 'NXB Lao động', 2022, 'Công nghệ thông tin', 'Tiếng Anh', 395),
-(5, 'Toán cao cấp', 'NXB Giáo dục', 2023, 'Toán học', 'Tiếng Việt', 520),
-(6, 'Văn học Việt Nam hiện đại', 'NXB Văn học', 2023, 'Văn học', 'Tiếng Việt', 280),
-(7, 'Lịch sử Việt Nam', 'NXB Chính trị quốc gia', 2022, 'Lịch sử', 'Tiếng Việt', 450),
-(8, 'Kinh tế học đại cương', 'NXB Thống kê', 2023, 'Kinh tế', 'Tiếng Việt', 380);
+INSERT INTO tblBookTitle (ID, title, author, publisher, publicYear, category, language, pageCount) VALUES
+(1, 'Lập trình Java cơ bản', 'Nguyễn Văn A', 'NXB Khoa học và Kỹ thuật', 2023, 'Công nghệ thông tin', 'Tiếng Việt', 350),
+(2, 'Cấu trúc dữ liệu và giải thuật', 'Trần Thị B', 'NXB Đại học Quốc gia', 2022, 'Công nghệ thông tin', 'Tiếng Việt', 420),
+(3, 'Clean Code', 'Robert C. Martin', 'NXB Tre', 2023, 'Công nghệ thông tin', 'Tiếng Anh', 464),
+(4, 'Design Patterns', 'Gang of Four', 'NXB Lao động', 2022, 'Công nghệ thông tin', 'Tiếng Anh', 395),
+(5, 'Toán cao cấp', 'Lê Văn C', 'NXB Giáo dục', 2023, 'Toán học', 'Tiếng Việt', 520),
+(6, 'Văn học Việt Nam hiện đại', 'Phạm Thị D', 'NXB Văn học', 2023, 'Văn học', 'Tiếng Việt', 280),
+(7, 'Lịch sử Việt Nam', 'Hoàng Văn E', 'NXB Chính trị quốc gia', 2022, 'Lịch sử', 'Tiếng Việt', 450),
+(8, 'Kinh tế học đại cương', 'Vũ Thị F', 'NXB Thống kê', 2023, 'Kinh tế', 'Tiếng Việt', 380);
 
 -- Insert DocumentCopies (Physical copies)
--- SỬA LỖI: Đổi tên cột BookTitleBookTitleID -> BookTitleID
 INSERT INTO tblDocumentCopy (ID, `condition`, status, BookTitleID) VALUES
 (1, 100, 'Available', 1),
 (2, 100, 'Available', 1),
@@ -65,17 +64,18 @@ INSERT INTO tblSupplier (ID, name, address, description) VALUES
 (3, 'Nhà sách Trí Tuệ', '789 Le Lai, Da Nang', 'Nhà sách chuyên ngành');
 
 -- Insert Import Invoices
--- SỬA LỖI: Bỏ cột thừa LibrarianLibrarianID và đổi SupplierSupplierID -> SupplierID
-INSERT INTO tblImportInvoice (ID, quantity, `date`, LibrarianUserID, SupplierID) VALUES
-(1, 50, '2024-01-10', 4, 1),
-(2, 30, '2024-02-15', 4, 2),
-(3, 40, '2024-03-20', 5, 1);
+-- SỬA: Đã bỏ cột 'quantity' (dữ liệu dẫn xuất) khỏi CSDL mới
+INSERT INTO tblImportInvoice (ID, `date`, LibrarianUserID, SupplierID) VALUES
+(1, '2024-01-10', 4, 1),
+(2, '2024-02-15', 4, 2),
+(3, '2024-03-20', 5, 1);
 
 -- Insert Invoice Details
--- SỬA LỖI: Đổi tên cột DocumentDocumentID -> DocumentCopyID và ImportInvoiceImportInvoiceID -> ImportInvoiceID
-INSERT INTO tblInvoiceDetail (ID, quantity, DocumentCopyID, ImportInvoiceID) VALUES
-(1, 2, 1, 1),
-(2, 2, 2, 1),
-(3, 2, 3, 2),
-(4, 2, 5, 2),
-(5, 2, 7, 3);
+-- SỬA: Đã bỏ cột 'quantity' và thêm cột 'price' (đơn giá cho mỗi bản sao)
+-- Logic mới: Mỗi dòng là MỘT bản sao cụ thể được nhập
+INSERT INTO tblInvoiceDetail (ID, price, DocumentCopyID, ImportInvoiceID) VALUES
+(1, 150000, 1, 1),
+(2, 150000, 2, 1),
+(3, 120000, 3, 2),
+(4, 250000, 5, 2),
+(5, 100000, 7, 3);

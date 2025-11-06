@@ -7,7 +7,8 @@ import java.util.List;
 public class LoanSlip implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
-    private Date loanDate;
+    private Date borrowDate;
+    private String status;
     private Reader reader;
     private Librarian librarian;
     private List<LoanDetail> loanDetails;
@@ -15,9 +16,10 @@ public class LoanSlip implements Serializable {
     public LoanSlip() {
     }
 
-    public LoanSlip(int id, Date loanDate, Reader reader, Librarian librarian, List<LoanDetail> loanDetails) {
+    public LoanSlip(int id, Date borrowDate, String status, Reader reader, Librarian librarian, List<LoanDetail> loanDetails) {
         this.id = id;
-        this.loanDate = loanDate;
+        this.borrowDate = borrowDate;
+        this.status = status;
         this.reader = reader;
         this.librarian = librarian;
         this.loanDetails = loanDetails;
@@ -32,12 +34,20 @@ public class LoanSlip implements Serializable {
         this.id = id;
     }
 
-    public Date getLoanDate() {
-        return loanDate;
+    public Date getBorrowDate() {
+        return borrowDate;
     }
 
-    public void setLoanDate(Date loanDate) {
-        this.loanDate = loanDate;
+    public void setBorrowDate(Date borrowDate) {
+        this.borrowDate = borrowDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Reader getReader() {

@@ -23,11 +23,13 @@
                 <p><strong>Email:</strong> ${reader.email}</p>
                 <p><strong>Phone:</strong> ${reader.phone}</p>
             </div>
+            
             <form action="${pageContext.request.contextPath}/view/ManageLendingDocument.jsp" method="post">
                 <% session.setAttribute("selectedReader", request.getAttribute("reader")); %>
                 <button type="submit">Select This Reader</button>
             </form>
         </c:if>
+        
         
         <c:if test="${empty reader && not empty param.keyword}">
             <div class="alert alert-error">

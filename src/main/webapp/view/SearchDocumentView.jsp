@@ -6,69 +6,181 @@
     <title>Tìm kiếm đầu sách</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 15px 20px;
+            max-width: none;
+        }
+
+        .header-section {
+            flex-shrink: 0;
+            margin-bottom: 12px;
+        }
+
+        .search-section {
+            flex-shrink: 0;
+            margin-bottom: 12px;
+        }
+
+        .search-section form {
+            margin: 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-section input[type="text"] {
+            flex: 1;
+            margin: 0;
+            padding: 8px 12px;
+        }
+
+        .search-section button {
+            margin: 0;
+            padding: 8px 20px;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            flex-shrink: 0;
+            margin-bottom: 8px;
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 5px;
+        }
+
+        .scrollable-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        table {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        table th, table td {
+            padding: 8px 10px;
+        }
+
         .detail-section {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: inset 0 0 0 1px rgba(102, 126, 234, 0.08);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
         .detail-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .detail-grid p {
+            margin: 5px 0;
         }
 
         .document-copy-list {
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         .document-copy-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 18px;
+            padding: 10px 12px;
             background: #ffffff;
             border: 1px solid #e3e6ef;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
         }
 
         .document-copy-item:hover {
             border-color: rgba(102, 126, 234, 0.5);
-            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
         }
 
         .document-copy-details {
             display: none;
             background: #fdfdff;
             border: 1px solid #e3e6ef;
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 6px 6px;
             border-top: none;
-            padding: 18px;
-            margin-top: -10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-top: -8px;
+            margin-bottom: 8px;
+            font-size: 0.85em;
         }
 
         .document-copy-details.active {
             display: block;
         }
 
+        .document-copy-details p {
+            margin: 5px 0;
+        }
+
         .condition-bar {
-            height: 6px;
+            height: 5px;
             width: 100%;
             background: #e1e5f2;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
         .condition-fill {
             height: 100%;
-            transition: width 0.4s ease;
+            transition: width 0.3s ease;
         }
 
         .condition-excellent { background: #38c172; }
@@ -78,35 +190,72 @@
         .condition-damaged { background: #e3342f; }
 
         .empty-state {
-            padding: 18px;
+            padding: 12px;
             background: #fff5f5;
-            border-radius: 8px;
+            border-radius: 6px;
             color: #c53030;
-            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .footer-section {
+            flex-shrink: 0;
+            margin-top: 12px;
+        }
+
+        .nav-links {
+            margin: 0;
+        }
+
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+        }
+
+        h3 {
+            font-size: 1.1em;
+            margin: 0 0 8px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="header-section" style="display: flex; justify-content: space-between; align-items: center;">
             <h1>📚 Tìm kiếm đầu sách</h1>
             <div>
                 <c:if test="${not empty sessionScope.user}">
-                    <span style="margin-right: 15px;">Xin chào, <strong>${sessionScope.user.name}</strong></span>
-                    <a href="${pageContext.request.contextPath}/logout" class="btn-secondary">Đăng xuất</a>
+                    <span style="margin-right: 15px; font-size: 0.9em;">Xin chào, <strong>${sessionScope.user.name}</strong></span>
+                    <a href="${pageContext.request.contextPath}/logout" class="btn-secondary" style="padding: 6px 12px; font-size: 0.9em;">Đăng xuất</a>
                 </c:if>
             </div>
         </div>
 
-        <form action="${pageContext.request.contextPath}/searchDocument" method="get">
-            <input type="hidden" name="action" value="search">
-            <input type="text" name="keyword" placeholder="Nhập tên sách, thể loại hoặc nhà xuất bản..." value="${keyword}">
-            <button type="submit">🔍 Tìm kiếm</button>
-        </form>
+        <div class="search-section">
+            <form action="${pageContext.request.contextPath}/searchDocument" method="get">
+                <input type="hidden" name="action" value="search">
+                <input type="text" name="keyword" placeholder="Nhập tên sách, thể loại hoặc nhà xuất bản..." value="${keyword}">
+                <button type="submit">🔍 Tìm kiếm</button>
+            </form>
+        </div>
 
-        <h3>Danh sách đầu sách</h3>
-        <c:if test="${not empty bookTitles}">
-            <table>
+        <div class="content-wrapper">
+            <div class="left-panel">
+                <div class="panel-header">
+                    <h3>📋 Danh sách đầu sách</h3>
+                </div>
+                <div class="scrollable-content">
+                    <c:if test="${not empty bookTitles}">
+                        <table>
                 <thead>
                     <tr>
                         <th>Mã đầu sách</th>
@@ -143,17 +292,24 @@
                     </c:forEach>
                 </tbody>
             </table>
-        </c:if>
-        <c:if test="${empty bookTitles}">
-            <div class="alert alert-error">
-                <p>Không tìm thấy đầu sách nào phù hợp. Vui lòng thử từ khóa khác.</p>
+                    </c:if>
+                    <c:if test="${empty bookTitles}">
+                        <div class="alert alert-error">
+                            <p>Không tìm thấy đầu sách nào phù hợp. Vui lòng thử từ khóa khác.</p>
+                        </div>
+                    </c:if>
+                </div>
             </div>
-        </c:if>
 
-        <c:if test="${not empty bookTitle}">
-            <div class="detail-section">
-                <h2>🔍 Thông tin đầu sách</h2>
-                <div class="detail-grid">
+            <div class="right-panel">
+                <div class="panel-header">
+                    <h3>📖 Chi tiết đầu sách</h3>
+                </div>
+                <div class="scrollable-content">
+                    <c:if test="${not empty bookTitle}">
+                        <div class="detail-section">
+                            <h2>� Thông tin cơ bản</h2>
+                            <div class="detail-grid">
                     <div>
                         <p><strong>Mã đầu sách:</strong> #${bookTitle.id}</p>
                         <p><strong>Tên sách:</strong> ${bookTitle.title}</p>
@@ -165,16 +321,16 @@
                         <p><strong>Thể loại:</strong> ${empty bookTitle.category ? 'Chưa cập nhật' : bookTitle.category}</p>
                         <p><strong>Ngôn ngữ:</strong> ${empty bookTitle.language ? 'Chưa cập nhật' : bookTitle.language}</p>
                         <p><strong>Số trang:</strong> ${bookTitle.pageCount > 0 ? bookTitle.pageCount : 'Chưa cập nhật'}</p>
-                    </div>
-                </div>
+                            </div>
+                            </div>
 
-                <c:if test="${not empty bookTitle.description}">
-                    <p style="margin-top: 15px;"><strong>Mô tả:</strong> ${bookTitle.description}</p>
-                </c:if>
+                            <c:if test="${not empty bookTitle.description}">
+                                <p style="margin-top: 10px; font-size: 0.9em;"><strong>Mô tả:</strong> ${bookTitle.description}</p>
+                            </c:if>
 
-                <h3 style="margin-top: 25px;">📘 Các bản sao hiện có</h3>
-                <c:if test="${not empty documentCopies}">
-                    <div class="document-copy-list">
+                            <h3 style="margin-top: 15px;">📘 Các bản sao hiện có</h3>
+                            <c:if test="${not empty documentCopies}">
+                                <div class="document-copy-list">
                         <c:forEach var="doc" items="${documentCopies}">
                             <div class="document-copy-item" data-target="copy-${doc.id}">
                                 <div>
@@ -220,26 +376,36 @@
                                     </c:choose>
                                 </p>
                             </div>
-                        </c:forEach>
-                    </div>
-                </c:if>
-                <c:if test="${empty documentCopies}">
-                    <div class="empty-state">
-                        <strong>⚠️ Chưa có bản sao nào cho đầu sách này.</strong>
-                    </div>
-                </c:if>
+                                </c:forEach>
+                                </div>
+                            </c:if>
+                            <c:if test="${empty documentCopies}">
+                                <div class="empty-state">
+                                    <strong>⚠️ Chưa có bản sao nào cho đầu sách này.</strong>
+                                </div>
+                            </c:if>
+                    </c:if>
+                    <c:if test="${empty bookTitle}">
+                        <div class="info-box" style="padding: 15px; font-size: 0.9em;">
+                            <p>Chọn một đầu sách từ danh sách bên trái để xem chi tiết và các bản sao.</p>
+                        </div>
+                    </c:if>
+                </div>
             </div>
-        </c:if>
+        </div>
 
-        <div class="nav-links" style="margin-top: 25px;">
-            <c:choose>
-                <c:when test="${sessionScope.userType == 'librarian'}">
-                    <a href="${pageContext.request.contextPath}/LibrarianHome.jsp" class="btn-secondary">Về trang thủ thư</a>
-                </c:when>
-                <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/ReaderHome.jsp" class="btn-secondary">Về trang độc giả</a>
-                </c:otherwise>
-            </c:choose>
+        <div class="footer-section">
+            <div class="nav-links">
+                <c:choose>
+                    <c:when test="${sessionScope.userType == 'librarian'}">
+                        <a href="${pageContext.request.contextPath}/view/ManageLendingDocument.jsp" class="btn" style="padding: 6px 15px; font-size: 0.9em;">📄 Quản lý mượn trả</a>
+                        <a href="${pageContext.request.contextPath}/LibrarianHome.jsp" class="btn-secondary" style="padding: 6px 15px; font-size: 0.9em;">⬅ Về trang chủ</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/ReaderHome.jsp" class="btn-secondary" style="padding: 6px 15px; font-size: 0.9em;">⬅ Về trang chủ</a>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
     </div>
 

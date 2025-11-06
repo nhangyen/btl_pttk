@@ -10,15 +10,21 @@ public class ReaderCard implements Serializable {
     private Date registrationDate;
     private String status;
     private int readerUserId;
+    private String path;
 
     public ReaderCard() {
     }
 
-    public ReaderCard(int cardId, Date registrationDate, String status, int readerUserId) {
+    public ReaderCard(int cardId, Date registrationDate, String status, int readerUserId, String path) {
         this.cardId = cardId;
         this.registrationDate = registrationDate;
         this.status = status;
         this.readerUserId = readerUserId;
+        this.path = path;
+    }
+
+    public ReaderCard(int cardId, Date registrationDate, String status, int readerUserId) {
+        this(cardId, registrationDate, status, readerUserId, null);
     }
 
     // Getters and Setters
@@ -52,5 +58,13 @@ public class ReaderCard implements Serializable {
 
     public void setReaderUserId(int readerUserId) {
         this.readerUserId = readerUserId;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

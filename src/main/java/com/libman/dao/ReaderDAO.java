@@ -9,8 +9,8 @@ import java.sql.SQLException;
 public class ReaderDAO {
     public Reader getReader(String keyword) {
         Reader reader = null;
-        String sql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, " +
-                     "r.ReaderCount, rc.cardID, rc.registrationDate, rc.status as cardStatus " +
+    String sql = "SELECT u.ID, u.username, u.password, u.name, u.dob, u.gender, u.email, u.phoneNumber, u.address, " +
+             "r.note, rc.cardID, rc.registrationDate, rc.status as cardStatus, rc.path as cardPath " +
                      "FROM tblUser u " +
                      "JOIN tblReader r ON u.ID = r.UserID " +
                      "LEFT JOIN tblReaderCard rc ON r.UserID = rc.ReaderUserID " +
@@ -30,7 +30,7 @@ public class ReaderDAO {
                 reader.setEmail(rs.getString("email"));
                 reader.setPhoneNumber(rs.getString("phoneNumber"));
                 reader.setAddress(rs.getString("address"));
-                // reader.setReaderCount(rs.getObject("ReaderCount") != null ? rs.getInt("ReaderCount") : null);
+                reader.setNote(rs.getString("note"));
                 
                 // Tạo ReaderCard nếu có
                 if (rs.getObject("cardID") != null) {
@@ -39,6 +39,7 @@ public class ReaderDAO {
                     card.setRegistrationDate(rs.getDate("registrationDate"));
                     card.setStatus(rs.getString("cardStatus"));
                     card.setReaderUserId(reader.getId());
+                    card.setPath(rs.getString("cardPath"));
                     reader.setReaderCard(card);
                 }
             }

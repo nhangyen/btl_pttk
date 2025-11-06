@@ -2,6 +2,7 @@ package com.libman.dao;
 
 import com.libman.model.LoanDetail;
 import com.libman.model.LoanSlip;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,52 +13,68 @@ public class LoanSlipDAO {
     public boolean saveLoan(LoanSlip loanSlip) {
         // Schema mới:
         // tblLoanSlip (ID, status, ReaderUserID, LibrarianUserID, ReturnSlipID)
-        // tblLoanDetail (ID, quantity, borrowdate, returndate, DocumentCopyID, LoanSlipID, ReturnSlipID, PenaltySlipID)
+        // tblLoanDetail (ID, borrowdate, returndate, DocumentCopyID, LoanSlipID, ReturnSlipID, PenaltySlipID)
         
         String sqlLoanSlip = "INSERT INTO tblLoanSlip(status, ReaderUserID, LibrarianUserID) VALUES(?, ?, ?)";
-        String sqlLoanDetail = "INSERT INTO tblLoanDetail(quantity, borrowdate, returndate, DocumentCopyID, LoanSlipID) VALUES(?, ?, ?, ?, ?)";
-        boolean success = false;
+        String sqlLoanDetail = "INSERT INTO tblLoanDetail(borrowdate, returndate, DocumentCopyID, LoanSlipID) VALUES(?, ?, ?, ?)";
+        Connection connection = null;
         try {
-            DAOFactory.getConnection().setAutoCommit(false);
-            try (PreparedStatement psLoanSlip = DAOFactory.getConnection().prepareStatement(sqlLoanSlip, Statement.RETURN_GENERATED_KEYS)) {
+            connection = DAOFactory.getConnection();
+            connection.setAutoCommit(false);
+
+            int loanSlipId;
+            try (PreparedStatement psLoanSlip = connection.prepareStatement(sqlLoanSlip, Statement.RETURN_GENERATED_KEYS)) {
                 psLoanSlip.setString(1, "Active");
                 psLoanSlip.setInt(2, loanSlip.getReader().getId());
                 psLoanSlip.setInt(3, loanSlip.getLibrarian().getId());
                 psLoanSlip.executeUpdate();
 
-                ResultSet generatedKeys = psLoanSlip.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int loanSlipId = generatedKeys.getInt(1);
-                    
-                    // Insert từng LoanDetail với LoanSlipID
-                    for (LoanDetail detail : loanSlip.getLoanDetails()) {
-                        try (PreparedStatement psLoanDetail = DAOFactory.getConnection().prepareStatement(sqlLoanDetail)) {
-                            psLoanDetail.setInt(1, 1); // quantity = 1
-                            psLoanDetail.setDate(2, new java.sql.Date(loanSlip.getLoanDate().getTime())); // borrowdate
-                            psLoanDetail.setDate(3, new java.sql.Date(detail.getDueDate().getTime())); // returndate (due date)
-                            psLoanDetail.setInt(4, detail.getDocumentCopy().getId()); // DocumentCopyID
-                            psLoanDetail.setInt(5, loanSlipId); // LoanSlipID
-                            psLoanDetail.executeUpdate();
-                        }
+                try (ResultSet generatedKeys = psLoanSlip.getGeneratedKeys()) {
+                    if (!generatedKeys.next()) {
+                        connection.rollback();
+                        return false;
                     }
+                    loanSlipId = generatedKeys.getInt(1);
                 }
             }
-            DAOFactory.getConnection().commit();
-            success = true;
+
+            DocumentDAO documentDAO = new DocumentDAO();
+            for (LoanDetail detail : loanSlip.getLoanDetails()) {
+                boolean locked = documentDAO.markAsBorrowed(connection, detail.getDocumentCopy());
+                if (!locked) {
+                    connection.rollback();
+                    return false;
+                }
+
+                try (PreparedStatement psLoanDetail = connection.prepareStatement(sqlLoanDetail)) {
+                    psLoanDetail.setDate(1, new java.sql.Date(loanSlip.getBorrowDate().getTime()));
+                    psLoanDetail.setDate(2, new java.sql.Date(detail.getDueDate().getTime()));
+                    psLoanDetail.setInt(3, detail.getDocumentCopy().getId());
+                    psLoanDetail.setInt(4, loanSlipId);
+                    psLoanDetail.executeUpdate();
+                }
+            }
+
+            connection.commit();
+            return true;
         } catch (SQLException e) {
-            try {
-                DAOFactory.getConnection().rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
             e.printStackTrace();
         } finally {
-            try {
-                DAOFactory.getConnection().setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        return success;
+        return false;
     }
 }
